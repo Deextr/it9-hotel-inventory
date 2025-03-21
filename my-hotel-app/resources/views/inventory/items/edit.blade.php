@@ -30,9 +30,11 @@
                             <!-- SKU -->
                             <div>
                                 <x-input-label for="sku" :value="__('SKU')" />
-                                <x-text-input id="sku" name="sku" type="text" class="mt-1 block w-full" 
-                                    :value="old('sku', $item->sku)" required />
-                                <x-input-error :messages="$errors->get('sku')" class="mt-2" />
+                                <x-text-input id="sku" type="text" class="mt-1 block w-full bg-gray-100" 
+                                    :value="$item->sku" disabled />
+                                <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                                    SKU is automatically generated and cannot be modified directly.
+                                </p>
                             </div>
 
                             <!-- Category -->

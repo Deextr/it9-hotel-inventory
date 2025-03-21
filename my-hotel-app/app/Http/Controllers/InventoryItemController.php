@@ -26,10 +26,12 @@ class InventoryItemController extends Controller
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'category_id' => 'required|exists:categories,id',
-            'sku' => 'required|string|unique:items,sku',
             'minimum_stock_level' => 'required|integer|min:0',
             'unit_of_measure' => 'required|string|max:50',
         ]);
+
+        // Generate SKU
+        $validated['sku'] = Item::generateSKU($request->category_id);
 
         Item::create($validated);
 
@@ -49,10 +51,14 @@ class InventoryItemController extends Controller
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'category_id' => 'required|exists:categories,id',
-            'sku' => 'required|string|unique:items,sku,' . $item->id,
             'minimum_stock_level' => 'required|integer|min:0',
             'unit_of_measure' => 'required|string|max:50',
         ]);
+
+        // Generate new SKU only if category changed
+        if ($item->category_id != $request->category_id) {
+            $validated['sku'] = Item::generateSKU($request->category_id);
+        }
 
         $item->update($validated);
 
