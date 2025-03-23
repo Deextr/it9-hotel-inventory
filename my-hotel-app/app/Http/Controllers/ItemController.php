@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Item;
 use App\Models\Category;
 
-class InventoryItemController extends Controller
+class ItemController extends Controller
 {
     public function index()
     {
