@@ -1,3 +1,4 @@
+// items table migration
 <?php
 
 use Illuminate\Database\Migrations\Migration;
@@ -13,9 +14,6 @@ return new class extends Migration
             $table->string('name');
             $table->text('description')->nullable();
             $table->foreignId('category_id')->constrained()->onDelete('cascade');
-            $table->string('sku')->unique();
-            $table->integer('minimum_stock_level');
-            $table->string('unit_of_measure');
             $table->timestamps();
         });
     }

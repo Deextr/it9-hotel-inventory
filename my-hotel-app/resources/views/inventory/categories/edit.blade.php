@@ -1,19 +1,24 @@
-<x-app-layout>
-    <x-slot name="header">
-        <div class="flex justify-between items-center">
-            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                {{ __('Edit Category') }}
-            </h2>
-            <a href="{{ route('inventory.categories.index') }}" 
-               class="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700">
-                Back to List
-            </a>
-        </div>
-    </x-slot>
+@extends('layouts.app')
 
+@section('header')
+    <header class="bg-white dark:bg-gray-800 shadow">
+        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center">
+                <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+                    {{ __('Edit Category') }}
+                </h2>
+                <a href="{{ route('inventory.categories.index') }}" class="btn-secondary">
+                    Back to List
+                </a>
+            </div>
+        </div>
+    </header>
+@endsection
+
+@section('content')
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+            <div class="card overflow-hidden">
                 <div class="p-6 text-gray-900 dark:text-gray-100">
                     <form action="{{ route('inventory.categories.update', $category) }}" method="POST">
                         @csrf
@@ -21,30 +26,20 @@
                         <div class="grid grid-cols-1 gap-6">
                             <!-- Name -->
                             <div>
-                                <x-input-label for="name" :value="__('Name')" />
-                                <x-text-input id="name" name="name" type="text" class="mt-1 block w-full" 
-                                    :value="old('name', $category->name)" required autofocus />
-                                <x-input-error :messages="$errors->get('name')" class="mt-2" />
-                            </div>
-
-                            <!-- Description -->
-                            <div>
-                                <x-input-label for="description" :value="__('Description')" />
-                                <textarea id="description" name="description" 
-                                    class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 shadow-sm"
-                                    rows="3">{{ old('description', $category->description) }}</textarea>
-                                <x-input-error :messages="$errors->get('description')" class="mt-2" />
+                                <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Name</label>
+                                <input id="name" name="name" type="text" class="mt-1 input-field block w-full" value="{{ old('name', $category->name) }}" required autofocus>
+                                @error('name') <span class="mt-2 text-sm text-red-600">{{ $message }}</span> @enderror
                             </div>
                         </div>
 
                         <div class="flex items-center justify-end mt-6">
-                            <x-primary-button>
+                            <button type="submit" class="btn-primary">
                                 {{ __('Update Category') }}
-                            </x-primary-button>
+                            </button>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
     </div>
-</x-app-layout>
+@endsection

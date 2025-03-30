@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 23, 2025 at 02:48 PM
+-- Generation Time: Mar 30, 2025 at 03:10 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -82,7 +82,8 @@ CREATE TABLE `categories` (
 --
 
 INSERT INTO `categories` (`id`, `name`, `description`, `created_at`, `updated_at`) VALUES
-(3, 'Bed', 'for beds', '2025-03-20 17:12:09', '2025-03-20 17:12:09');
+(1, 'bed', NULL, '2025-03-30 02:46:37', '2025-03-30 02:46:37'),
+(2, 'kitchen', NULL, '2025-03-30 02:46:52', '2025-03-30 02:46:52');
 
 -- --------------------------------------------------------
 
@@ -126,9 +127,6 @@ CREATE TABLE `items` (
   `name` varchar(255) NOT NULL,
   `description` text DEFAULT NULL,
   `category_id` bigint(20) UNSIGNED NOT NULL,
-  `sku` varchar(255) NOT NULL,
-  `minimum_stock_level` int(11) NOT NULL,
-  `unit_of_measure` varchar(255) NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -137,8 +135,8 @@ CREATE TABLE `items` (
 -- Dumping data for table `items`
 --
 
-INSERT INTO `items` (`id`, `name`, `description`, `category_id`, `sku`, `minimum_stock_level`, `unit_of_measure`, `created_at`, `updated_at`) VALUES
-(4, 'king beddd', 'super xl bed', 3, 'BED250001', 15, 'pieces', '2025-03-20 17:12:47', '2025-03-20 17:13:28');
+INSERT INTO `items` (`id`, `name`, `description`, `category_id`, `created_at`, `updated_at`) VALUES
+(1, 'king bed', 'king size', 1, '2025-03-30 02:47:09', '2025-03-30 02:47:09');
 
 -- --------------------------------------------------------
 
@@ -243,16 +241,19 @@ CREATE TABLE `password_reset_tokens` (
 CREATE TABLE `purchase_orders` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `supplier_id` bigint(20) UNSIGNED NOT NULL,
-  `order_number` varchar(255) NOT NULL,
   `order_date` date NOT NULL,
-  `expected_delivery_date` date NOT NULL,
-  `status` enum('pending','delivered','canceled') NOT NULL,
+  `status` enum('pending','delivered','canceled') NOT NULL DEFAULT 'pending',
   `total_amount` decimal(10,2) NOT NULL,
-  `notes` text DEFAULT NULL,
-  `user_id` bigint(20) UNSIGNED NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `purchase_orders`
+--
+
+INSERT INTO `purchase_orders` (`id`, `supplier_id`, `order_date`, `status`, `total_amount`, `created_at`, `updated_at`) VALUES
+(1, 1, '2025-03-30', 'pending', 500.00, '2025-03-30 02:52:44', '2025-03-30 02:52:44');
 
 -- --------------------------------------------------------
 
@@ -263,14 +264,20 @@ CREATE TABLE `purchase_orders` (
 CREATE TABLE `purchase_order_items` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `purchase_order_id` bigint(20) UNSIGNED NOT NULL,
-  `item_id` bigint(20) UNSIGNED NOT NULL,
+  `item_name` varchar(255) NOT NULL,
   `quantity` int(11) NOT NULL,
   `unit_price` decimal(10,2) NOT NULL,
   `subtotal` decimal(10,2) NOT NULL,
-  `received_quantity` int(11) NOT NULL DEFAULT 0,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `purchase_order_items`
+--
+
+INSERT INTO `purchase_order_items` (`id`, `purchase_order_id`, `item_name`, `quantity`, `unit_price`, `subtotal`, `created_at`, `updated_at`) VALUES
+(1, 1, 'king bed', 5, 100.00, 500.00, '2025-03-30 02:52:44', '2025-03-30 02:52:44');
 
 -- --------------------------------------------------------
 
@@ -284,15 +291,6 @@ CREATE TABLE `roles` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `roles`
---
-
-INSERT INTO `roles` (`id`, `name`, `created_at`, `updated_at`) VALUES
-(1, 'admin', '2025-03-20 05:52:16', '2025-03-20 05:52:16'),
-(2, 'inventory_manager', '2025-03-20 05:52:16', '2025-03-20 05:52:16'),
-(3, 'staff', '2025-03-20 05:52:16', '2025-03-20 05:52:16');
 
 -- --------------------------------------------------------
 
@@ -314,9 +312,7 @@ CREATE TABLE `sessions` (
 --
 
 INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
-('BXeVutMdns62LJm9OBqTyXwVsNYOmCVx9WftTtfb', 1, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36', 'YTo1OntzOjY6Il90b2tlbiI7czo0MDoiVm5mYlZGOWpjVDQzbjBNdWFHS3pLdllQdFhPNE41ZDNJY0xaVmNicSI7czozOiJ1cmwiO2E6MDp7fXM6OToiX3ByZXZpb3VzIjthOjE6e3M6MzoidXJsIjtzOjM3OiJodHRwOi8vbG9jYWxob3N0OjgwMDAvaW52ZW50b3J5L2l0ZW1zIjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo1MDoibG9naW5fd2ViXzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6MTt9', 1742732338),
-('Lrs0nxRJIDDVD5XBMh8kVpQ3mBAZm5udjy4xHMiz', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiSTVObkQzdmF5azdzOEF6dWpVY1RRN1dwRndDZUpGY1RsUFh1SktrVyI7czozOiJ1cmwiO2E6MTp7czo4OiJpbnRlbmRlZCI7czozNzoiaHR0cDovL2xvY2FsaG9zdDo4MDAwL2ludmVudG9yeS9pdGVtcyI7fXM6OToiX3ByZXZpb3VzIjthOjE6e3M6MzoidXJsIjtzOjM3OiJodHRwOi8vbG9jYWxob3N0OjgwMDAvaW52ZW50b3J5L2l0ZW1zIjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', 1742721870),
-('tUEWejq0UK1k64HkHPD2AboH7rloWp8H0TZKB61R', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiZjNZZkxnd29xdDlPdFVMcXh0VHFGcVEyOWkwcHdvTVgzT2tUYmJlRyI7czozOiJ1cmwiO2E6MTp7czo4OiJpbnRlbmRlZCI7czozNzoiaHR0cDovL2xvY2FsaG9zdDo4MDAwL2ludmVudG9yeS9pdGVtcyI7fXM6OToiX3ByZXZpb3VzIjthOjE6e3M6MzoidXJsIjtzOjM3OiJodHRwOi8vbG9jYWxob3N0OjgwMDAvaW52ZW50b3J5L2l0ZW1zIjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', 1742721869);
+('zBohjxaQsLUXQcYwhH1OLlvlH7Q5H6WxoWg9Z6xn', 1, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiaGl1TnF4N09VOG5ucElXdVRhSzhQUTN4RTd4STloTldWelhEWXdVMCI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NDc6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMC9pbnZlbnRvcnkvcHVyY2hhc2Utb3JkZXJzIjt9czo1MDoibG9naW5fd2ViXzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6MTt9', 1743331992);
 
 -- --------------------------------------------------------
 
@@ -360,7 +356,7 @@ CREATE TABLE `suppliers` (
 --
 
 INSERT INTO `suppliers` (`id`, `name`, `contact_person`, `email`, `phone`, `address`, `notes`, `created_at`, `updated_at`) VALUES
-(1, 'EarlGab Corppp', 'Earl', 'earl@gmail.com', '09199284675', 'Matina, Davao City', NULL, '2025-03-23 02:03:20', '2025-03-23 02:03:49');
+(1, 'earlNatiks', 'earl', 'earl@gmail.com', '09199284675', 'Matina', NULL, '2025-03-30 02:47:26', '2025-03-30 02:47:26');
 
 -- --------------------------------------------------------
 
@@ -385,9 +381,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `remember_token`, `created_at`, `updated_at`, `role_id`) VALUES
-(1, 'Test User', 'test@example.com', '2025-03-20 05:52:16', '$2y$12$MLzAABHcNMsvrrkyJlxS8uzTkRDJV0x.0XgheVw7obmg.yg38WYE.', '92j7XHKwC00wzrfiRHtUvEJ4HKlPqCCtzBxftvqAlVZd079wrjSA8v9kR44e', '2025-03-20 05:52:16', '2025-03-20 05:52:16', 1),
-(2, 'Inventory Manager', 'inventory@example.com', '2025-03-20 05:52:16', '$2y$12$MLzAABHcNMsvrrkyJlxS8uzTkRDJV0x.0XgheVw7obmg.yg38WYE.', 'i3NZBvTJDV', '2025-03-20 05:52:16', '2025-03-20 05:52:16', 2),
-(3, 'Staff Member', 'staff@example.com', '2025-03-20 05:52:16', '$2y$12$MLzAABHcNMsvrrkyJlxS8uzTkRDJV0x.0XgheVw7obmg.yg38WYE.', 'qMyHsw1otn', '2025-03-20 05:52:16', '2025-03-20 05:52:16', 3);
+(1, 'dexter', 'dexter@gmail.com', NULL, '$2y$12$T6/UhYI2CH68oAV9QzFJHOfChPEvyyHlDe.TzLb01HjZNyI8/OVqy', NULL, '2025-03-30 02:46:08', '2025-03-30 02:46:08', NULL);
 
 --
 -- Indexes for dumped tables
@@ -438,7 +432,6 @@ ALTER TABLE `inventory`
 --
 ALTER TABLE `items`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `items_sku_unique` (`sku`),
   ADD KEY `items_category_id_foreign` (`category_id`);
 
 --
@@ -477,17 +470,14 @@ ALTER TABLE `password_reset_tokens`
 --
 ALTER TABLE `purchase_orders`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `purchase_orders_order_number_unique` (`order_number`),
-  ADD KEY `purchase_orders_supplier_id_foreign` (`supplier_id`),
-  ADD KEY `purchase_orders_user_id_foreign` (`user_id`);
+  ADD KEY `purchase_orders_supplier_id_foreign` (`supplier_id`);
 
 --
 -- Indexes for table `purchase_order_items`
 --
 ALTER TABLE `purchase_order_items`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `purchase_order_items_purchase_order_id_foreign` (`purchase_order_id`),
-  ADD KEY `purchase_order_items_item_id_foreign` (`item_id`);
+  ADD KEY `purchase_order_items_purchase_order_id_foreign` (`purchase_order_id`);
 
 --
 -- Indexes for table `roles`
@@ -541,7 +531,7 @@ ALTER TABLE `audit_logs`
 -- AUTO_INCREMENT for table `categories`
 --
 ALTER TABLE `categories`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `failed_jobs`
@@ -559,7 +549,7 @@ ALTER TABLE `inventory`
 -- AUTO_INCREMENT for table `items`
 --
 ALTER TABLE `items`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `jobs`
@@ -583,19 +573,19 @@ ALTER TABLE `migrations`
 -- AUTO_INCREMENT for table `purchase_orders`
 --
 ALTER TABLE `purchase_orders`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `purchase_order_items`
 --
 ALTER TABLE `purchase_order_items`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `roles`
 --
 ALTER TABLE `roles`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `stock_movements`
@@ -613,7 +603,7 @@ ALTER TABLE `suppliers`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- Constraints for dumped tables
@@ -642,14 +632,12 @@ ALTER TABLE `items`
 -- Constraints for table `purchase_orders`
 --
 ALTER TABLE `purchase_orders`
-  ADD CONSTRAINT `purchase_orders_supplier_id_foreign` FOREIGN KEY (`supplier_id`) REFERENCES `suppliers` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `purchase_orders_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `purchase_orders_supplier_id_foreign` FOREIGN KEY (`supplier_id`) REFERENCES `suppliers` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `purchase_order_items`
 --
 ALTER TABLE `purchase_order_items`
-  ADD CONSTRAINT `purchase_order_items_item_id_foreign` FOREIGN KEY (`item_id`) REFERENCES `items` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `purchase_order_items_purchase_order_id_foreign` FOREIGN KEY (`purchase_order_id`) REFERENCES `purchase_orders` (`id`) ON DELETE CASCADE;
 
 --

@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\SupplierController;
+use App\Http\Controllers\PurchaseOrderController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -21,6 +22,8 @@ Route::middleware('auth')->group(function () {
     Route::resource('inventory/items', ItemController::class)->names('inventory.items');
     Route::resource('inventory/categories', CategoryController::class)->names('inventory.categories');
     Route::resource('inventory/suppliers', SupplierController::class)->names('inventory.suppliers');
+    Route::resource('inventory/purchase-orders', PurchaseOrderController::class)->names('inventory.purchase_orders');
+
     
 });
 
