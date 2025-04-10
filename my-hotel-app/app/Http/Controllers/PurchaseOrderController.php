@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\PurchaseOrder;
 use App\Models\PurchaseOrderItem;
 use App\Models\Supplier;
+use App\Models\Item;
+use App\Models\Inventory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -80,6 +82,11 @@ class PurchaseOrderController extends Controller
 
     public function edit(PurchaseOrder $purchaseOrder)
     {
+        if ($purchaseOrder->status !== 'pending') {
+            return redirect()->route('inventory.purchase_orders.show', $purchaseOrder)
+                ->with('error', 'Cannot edit a purchase order that has been delivered or canceled.');
+        }
+        
         $suppliers = Supplier::all();
         $purchaseOrder->load('items');
         return view('inventory.purchase_orders.edit', compact('purchaseOrder', 'suppliers'));
@@ -87,10 +94,13 @@ class PurchaseOrderController extends Controller
 
     public function update(Request $request, PurchaseOrder $purchaseOrder)
     {
+        if ($purchaseOrder->status !== 'pending') {
+            return redirect()->route('inventory.purchase_orders.show', $purchaseOrder)
+                ->with('error', 'Cannot update a purchase order that has been delivered or canceled.');
+        }
+        
         $validated = $request->validate([
             'supplier_id' => 'required|exists:suppliers,id',
-            'order_date' => 'required|date',
-            'status' => 'required|in:pending,delivered,canceled',
             'items' => 'required|array|min:1',
             'items.*.id' => 'nullable|exists:purchase_order_items,id',
             'items.*.item_name' => 'required|string',
@@ -110,8 +120,6 @@ class PurchaseOrderController extends Controller
             // Update purchase order
             $purchaseOrder->update([
                 'supplier_id' => $validated['supplier_id'],
-                'order_date' => $validated['order_date'],
-                'status' => $validated['status'],
                 'total_amount' => $totalAmount,
             ]);
 
@@ -137,6 +145,68 @@ class PurchaseOrderController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->with('error', 'Failed to update purchase order: ' . $e->getMessage())->withInput();
+        }
+    }
+
+    public function markAsDelivered(PurchaseOrder $purchaseOrder)
+    {
+        if ($purchaseOrder->status !== 'pending') {
+            return back()->with('error', 'This purchase order has already been ' . $purchaseOrder->status . '.');
+        }
+
+        try {
+            DB::beginTransaction();
+            
+            $purchaseOrder->update([
+                'status' => 'delivered',
+                'delivered_date' => now(),
+            ]);
+            
+            // Process items into inventory
+            foreach ($purchaseOrder->items as $orderItem) {
+                // Find or create the item
+                $item = Item::firstOrCreate(
+                    ['name' => $orderItem->item_name],
+                    [
+                        'description' => 'Added from purchase order #' . $purchaseOrder->id,
+                        'category_id' => 1 // Default category, can be changed later
+                    ]
+                );
+                
+                // Update inventory
+                $inventory = Inventory::firstOrNew(['item_id' => $item->id]);
+                $inventory->current_stock += $orderItem->quantity;
+                $inventory->last_stocked_at = now();
+                $inventory->supplier_name = $purchaseOrder->supplier->name;
+                $inventory->purchase_order_id = $purchaseOrder->id;
+                $inventory->save();
+            }
+            
+            DB::commit();
+
+            return redirect()->route('inventory.purchase_orders.show', $purchaseOrder)
+                ->with('success', 'Purchase order marked as delivered and items added to inventory.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Failed to update purchase order status: ' . $e->getMessage());
+        }
+    }
+
+    public function markAsCanceled(PurchaseOrder $purchaseOrder)
+    {
+        if ($purchaseOrder->status !== 'pending') {
+            return back()->with('error', 'This purchase order has already been ' . $purchaseOrder->status . '.');
+        }
+
+        try {
+            $purchaseOrder->update([
+                'status' => 'canceled',
+            ]);
+
+            return redirect()->route('inventory.purchase_orders.show', $purchaseOrder)
+                ->with('success', 'Purchase order marked as canceled.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Failed to update purchase order status: ' . $e->getMessage());
         }
     }
 

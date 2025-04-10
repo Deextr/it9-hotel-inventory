@@ -35,7 +35,7 @@
                           x-data="purchaseOrderForm({{ json_encode($purchaseOrder->items) }})">
                         @csrf
                         @method('PUT')
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                             <div>
                                 <label for="supplier_id" class="block text-sm font-medium text-gray-700">Supplier</label>
                                 <select id="supplier_id" name="supplier_id" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required>
@@ -51,22 +51,10 @@
                                 @enderror
                             </div>
                             <div>
-                                <label for="order_date" class="block text-sm font-medium text-gray-700">Order Date</label>
-                                <input type="date" name="order_date" id="order_date" value="{{ old('order_date', $purchaseOrder->order_date->format('Y-m-d')) }}" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" required>
-                                @error('order_date')
-                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                                @enderror
-                            </div>
-                            <div>
-                                <label for="status" class="block text-sm font-medium text-gray-700">Status</label>
-                                <select id="status" name="status" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required>
-                                    <option value="pending" {{ old('status', $purchaseOrder->status) == 'pending' ? 'selected' : '' }}>Pending</option>
-                                    <option value="delivered" {{ old('status', $purchaseOrder->status) == 'delivered' ? 'selected' : '' }}>Delivered</option>
-                                    <option value="canceled" {{ old('status', $purchaseOrder->status) == 'canceled' ? 'selected' : '' }}>Canceled</option>
-                                </select>
-                                @error('status')
-                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                                @enderror
+                                <label class="block text-sm font-medium text-gray-700">Order Date</label>
+                                <div class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-gray-100 rounded-md shadow-sm sm:text-sm">
+                                    {{ $purchaseOrder->order_date->format('Y-m-d') }}
+                                </div>
                             </div>
                         </div>
 

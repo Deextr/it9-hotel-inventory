@@ -10,11 +10,13 @@ class PurchaseOrder extends Model
         'supplier_id',
         'order_date',
         'status',
+        'delivered_date',
         'total_amount',
     ];
 
     protected $casts = [
         'order_date' => 'date',
+        'delivered_date' => 'date',
     ];
 
     public function supplier()

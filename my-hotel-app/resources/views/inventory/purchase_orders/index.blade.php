@@ -40,6 +40,7 @@
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Supplier</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Order Date</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Delivered Date</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Amount</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                                 </tr>
@@ -65,11 +66,16 @@
                                                 </span>
                                             @endif
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">{{ number_format($order->total_amount, 2) }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            {{ $order->status == 'delivered' && $order->delivered_date ? $order->delivered_date->format('Y-m-d') : '-' }}
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">${{ number_format($order->total_amount, 2) }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                             <div class="flex space-x-2">
                                                 <a href="{{ route('inventory.purchase_orders.show', $order) }}" class="text-indigo-600 hover:text-indigo-900">View</a>
-                                                <a href="{{ route('inventory.purchase_orders.edit', $order) }}" class="text-blue-600 hover:text-blue-900">Edit</a>
+                                                @if($order->status == 'pending')
+                                                    <a href="{{ route('inventory.purchase_orders.edit', $order) }}" class="text-blue-600 hover:text-blue-900">Edit</a>
+                                                @endif
                                                 <form action="{{ route('inventory.purchase_orders.destroy', $order) }}" method="POST" class="inline">
                                                     @csrf
                                                     @method('DELETE')
@@ -80,7 +86,7 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="6" class="px-6 py-4 whitespace-nowrap text-center">No purchase orders found.</td>
+                                        <td colspan="7" class="px-6 py-4 whitespace-nowrap text-center">No purchase orders found.</td>
                                     </tr>
                                 @endforelse
                             </tbody>

@@ -13,6 +13,7 @@ return new class extends Migration
             $table->foreignId('supplier_id')->constrained()->onDelete('cascade');
             $table->date('order_date');
             $table->enum('status', ['pending', 'delivered', 'canceled'])->default('pending');
+            $table->date('delivered_date')->nullable();
             $table->decimal('total_amount', 10, 2);
             $table->timestamps();
         });

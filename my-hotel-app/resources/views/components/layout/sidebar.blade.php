@@ -34,7 +34,7 @@
                     <span>Categories</span>
                 </a>
 
-                <a href="#" class="flex items-center px-4 py-2 rounded-lg hover:bg-gray-700">
+                <a href="{{ route('inventory.view') }}?filter=low_stock" class="flex items-center px-4 py-2 rounded-lg {{ request()->routeIs('inventory.view') && request()->query('filter') == 'low_stock' ? 'bg-gray-900' : 'hover:bg-gray-700' }}">
                     <span>Low Stock</span>
                 </a>
             </div>
@@ -54,7 +54,7 @@
                 </svg>
             </button>
             <div x-show="open" class="pl-8 mt-2 space-y-2" style="display: none;">
-                <a href="#" class="flex items-center px-4 py-2 rounded-lg hover:bg-gray-700">
+                <a href="{{ route('inventory.view') }}" class="flex items-center px-4 py-2 rounded-lg {{ request()->routeIs('inventory.view') && !request()->query('filter') ? 'bg-gray-900' : 'hover:bg-gray-700' }}">
                     <span>Stock In</span>
                 </a>
                 <a href="#" class="flex items-center px-4 py-2 rounded-lg hover:bg-gray-700">

@@ -19,4 +19,15 @@ class Item extends Model
     {
         return $this->belongsTo(Category::class);
     }
+    
+    public function inventory()
+    {
+        return $this->hasOne(Inventory::class);
+    }
+    
+    // Helper method to get current stock
+    public function getCurrentStock()
+    {
+        return $this->inventory ? $this->inventory->current_stock : 0;
+    }
 }
