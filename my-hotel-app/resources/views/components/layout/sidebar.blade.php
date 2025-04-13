@@ -33,10 +33,6 @@
                 <a href="{{ route('inventory.categories.index') }}" class="flex items-center px-4 py-2 rounded-lg {{ request()->routeIs('inventory.categories.*') ? 'bg-gray-900' : 'hover:bg-gray-700' }}">
                     <span>Categories</span>
                 </a>
-
-                <a href="{{ route('inventory.view') }}?filter=low_stock" class="flex items-center px-4 py-2 rounded-lg {{ request()->routeIs('inventory.view') && request()->query('filter') == 'low_stock' ? 'bg-gray-900' : 'hover:bg-gray-700' }}">
-                    <span>Low Stock</span>
-                </a>
             </div>
         </div>
 
@@ -83,13 +79,31 @@
         </a>
 
         <!-- Locations -->
-        <a href="#" class="flex items-center px-4 py-2 rounded-lg hover:bg-gray-700">
-            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
-            </svg>
-            <span>Locations</span>
-        </a>
+        <div x-data="{ open: false }">
+            <button @click="open = !open" class="flex items-center justify-between w-full px-4 py-2 rounded-lg hover:bg-gray-700">
+                <div class="flex items-center">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    </svg>
+                    <span>Locations</span>
+                </div>
+                <svg class="w-4 h-4 transition-transform" :class="{ 'rotate-180': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+            </button>
+            <div x-show="open" class="pl-8 mt-2 space-y-2" style="display: none;">
+                <a href="{{ route('locations.create') }}" class="flex items-center px-4 py-2 rounded-lg {{ request()->routeIs('locations.create') ? 'bg-gray-900' : 'hover:bg-gray-700' }}">
+                    <span>Create Location</span>
+                </a>
+                <a href="{{ route('locations.create-batch') }}" class="flex items-center px-4 py-2 rounded-lg {{ request()->routeIs('locations.create-batch') ? 'bg-gray-900' : 'hover:bg-gray-700' }}">
+                    <span>Create Multiple</span>
+                </a>
+                <a href="{{ route('locations.index') }}" class="flex items-center px-4 py-2 rounded-lg {{ request()->routeIs('locations.index') ? 'bg-gray-900' : 'hover:bg-gray-700' }}">
+                    <span>View Locations</span>
+                </a>
+            </div>
+        </div>
 
         <!-- Reports -->
         <a href="#" class="flex items-center px-4 py-2 rounded-lg hover:bg-gray-700">

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 10, 2025 at 03:55 PM
+-- Generation Time: Apr 13, 2025 at 04:22 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -77,13 +77,6 @@ CREATE TABLE `categories` (
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Dumping data for table `categories`
---
-
-INSERT INTO `categories` (`id`, `name`, `description`, `created_at`, `updated_at`) VALUES
-(1, 'beds', NULL, '2025-04-10 02:10:28', '2025-04-10 02:10:28');
-
 -- --------------------------------------------------------
 
 --
@@ -118,13 +111,6 @@ CREATE TABLE `inventory` (
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Dumping data for table `inventory`
---
-
-INSERT INTO `inventory` (`id`, `item_id`, `current_stock`, `reorder_level`, `last_stocked_at`, `supplier_name`, `purchase_order_id`, `created_at`, `updated_at`) VALUES
-(1, 1, 10, 10, '2025-04-10 10:12:35', 'earlNatiks', 1, '2025-04-10 02:12:35', '2025-04-10 02:12:35');
-
 -- --------------------------------------------------------
 
 --
@@ -139,13 +125,6 @@ CREATE TABLE `items` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `items`
---
-
-INSERT INTO `items` (`id`, `name`, `description`, `category_id`, `created_at`, `updated_at`) VALUES
-(1, 'Massive bed', 'king size', 1, '2025-04-10 02:10:45', '2025-04-10 02:10:45');
 
 -- --------------------------------------------------------
 
@@ -191,12 +170,41 @@ CREATE TABLE `job_batches` (
 CREATE TABLE `locations` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `name` varchar(255) NOT NULL,
-  `type` varchar(255) NOT NULL,
-  `floor` varchar(255) NOT NULL,
+  `floor_number` int(11) NOT NULL,
+  `area_type` enum('room','kitchen','hallway','restaurant','storage','other') NOT NULL,
+  `room_number` varchar(255) DEFAULT NULL,
   `description` text DEFAULT NULL,
+  `is_active` tinyint(1) NOT NULL DEFAULT 1,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `locations`
+--
+
+INSERT INTO `locations` (`id`, `name`, `floor_number`, `area_type`, `room_number`, `description`, `is_active`, `created_at`, `updated_at`) VALUES
+(1, 'Floor 2 - Room 1', 2, 'room', '1', 'new room', 0, '2025-04-13 06:14:45', '2025-04-13 06:21:47'),
+(2, 'Floor 4 Room RM101101', 4, 'room', 'RM101101', 'rooms', 1, '2025-04-13 06:15:31', '2025-04-13 06:15:31'),
+(3, 'Floor 4 Room RM101102', 4, 'room', 'RM101102', 'rooms', 1, '2025-04-13 06:15:31', '2025-04-13 06:15:31'),
+(4, 'Floor 4 Room RM101103', 4, 'room', 'RM101103', 'rooms', 1, '2025-04-13 06:15:31', '2025-04-13 06:15:31'),
+(5, 'Floor 4 Room RM101104', 4, 'room', 'RM101104', 'rooms', 1, '2025-04-13 06:15:31', '2025-04-13 06:15:31'),
+(6, 'Floor 4 Room RM101105', 4, 'room', 'RM101105', 'rooms', 1, '2025-04-13 06:15:31', '2025-04-13 06:15:31'),
+(7, 'Floor 4 Room RM101106', 4, 'room', 'RM101106', 'rooms', 1, '2025-04-13 06:15:31', '2025-04-13 06:15:31'),
+(8, 'Floor 4 Room RM101107', 4, 'room', 'RM101107', 'rooms', 1, '2025-04-13 06:15:31', '2025-04-13 06:15:31'),
+(9, 'Floor 4 Room RM101108', 4, 'room', 'RM101108', 'rooms', 1, '2025-04-13 06:15:31', '2025-04-13 06:15:31'),
+(10, 'Floor 4 Room RM101109', 4, 'room', 'RM101109', 'rooms', 1, '2025-04-13 06:15:31', '2025-04-13 06:15:31'),
+(11, 'Floor 4 Room RM101110', 4, 'room', 'RM101110', 'rooms', 1, '2025-04-13 06:15:31', '2025-04-13 06:15:31'),
+(12, 'Floor 4 Room RM101111', 4, 'room', 'RM101111', 'rooms', 1, '2025-04-13 06:15:31', '2025-04-13 06:15:31'),
+(13, 'Floor 4 Room RM101112', 4, 'room', 'RM101112', 'rooms', 1, '2025-04-13 06:15:31', '2025-04-13 06:15:31'),
+(14, 'Floor 4 Room RM101113', 4, 'room', 'RM101113', 'rooms', 1, '2025-04-13 06:15:31', '2025-04-13 06:15:31'),
+(15, 'Floor 4 Room RM101114', 4, 'room', 'RM101114', 'rooms', 1, '2025-04-13 06:15:31', '2025-04-13 06:15:31'),
+(16, 'Floor 4 Room RM101115', 4, 'room', 'RM101115', 'rooms', 1, '2025-04-13 06:15:31', '2025-04-13 06:15:31'),
+(17, 'Floor 4 Room RM101116', 4, 'room', 'RM101116', 'rooms', 1, '2025-04-13 06:15:31', '2025-04-13 06:15:31'),
+(18, 'Floor 4 Room RM101117', 4, 'room', 'RM101117', 'rooms', 1, '2025-04-13 06:15:31', '2025-04-13 06:15:31'),
+(19, 'Floor 4 Room RM101118', 4, 'room', 'RM101118', 'rooms', 1, '2025-04-13 06:15:31', '2025-04-13 06:15:31'),
+(20, 'Floor 4 Room RM101119', 4, 'room', 'RM101119', 'rooms', 1, '2025-04-13 06:15:31', '2025-04-13 06:15:31'),
+(21, 'Floor 4 Room RM101120', 4, 'room', 'RM101120', 'rooms', 1, '2025-04-13 06:15:31', '2025-04-13 06:15:31');
 
 -- --------------------------------------------------------
 
@@ -258,13 +266,6 @@ CREATE TABLE `purchase_orders` (
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Dumping data for table `purchase_orders`
---
-
-INSERT INTO `purchase_orders` (`id`, `supplier_id`, `order_date`, `status`, `delivered_date`, `total_amount`, `created_at`, `updated_at`) VALUES
-(1, 1, '2025-04-10', 'delivered', '2025-04-10', 10000.00, '2025-04-10 02:11:47', '2025-04-10 02:12:35');
-
 -- --------------------------------------------------------
 
 --
@@ -281,13 +282,6 @@ CREATE TABLE `purchase_order_items` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `purchase_order_items`
---
-
-INSERT INTO `purchase_order_items` (`id`, `purchase_order_id`, `item_name`, `quantity`, `unit_price`, `subtotal`, `created_at`, `updated_at`) VALUES
-(1, 1, 'Massive bed', 10, 1000.00, 10000.00, '2025-04-10 02:11:47', '2025-04-10 02:11:47');
 
 -- --------------------------------------------------------
 
@@ -322,8 +316,7 @@ CREATE TABLE `sessions` (
 --
 
 INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
-('BjuuQYVHaroE8hwFyNrDBLo1y6XR5yTZBfkxiqJ9', 1, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoielBvNXFMQnh5TEhlYmtmNGRhRGpSajg4UmZKSDBLZmRkb1VocUdwQSI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6Mzc6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMC9pbnZlbnRvcnkvc3RvY2siO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX1zOjUwOiJsb2dpbl93ZWJfNTliYTM2YWRkYzJiMmY5NDAxNTgwZjAxNGM3ZjU4ZWE0ZTMwOTg5ZCI7aToxO30=', 1744281848),
-('mCWzraMKXrhRVluFYPnBu0SKdy6ZC4pxapIPnmQj', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiTndaZXgxOG54cGNENVQ5dHBJN1ZvTExKRlRsUnlSRVJjdDJnenpKcyI7czozOiJ1cmwiO2E6MTp7czo4OiJpbnRlbmRlZCI7czozNzoiaHR0cDovLzEyNy4wLjAuMTo4MDAwL2ludmVudG9yeS9pdGVtcyI7fXM6OToiX3ByZXZpb3VzIjthOjE6e3M6MzoidXJsIjtzOjI3OiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvbG9naW4iO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1744279774);
+('axdaFDv1YE0VFxwuCRGUZwstgQsnUHbCNna2Kqpf', 1, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiY2pnUGZ4UkZJNXRnNm8yYWp4czlja0RVS2xxbTJNMWlwTVIwb1drNyI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MzE6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9sb2NhdGlvbnMiO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX1zOjUwOiJsb2dpbl93ZWJfNTliYTM2YWRkYzJiMmY5NDAxNTgwZjAxNGM3ZjU4ZWE0ZTMwOTg5ZCI7aToxO30=', 1744554128);
 
 -- --------------------------------------------------------
 
@@ -362,13 +355,6 @@ CREATE TABLE `suppliers` (
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Dumping data for table `suppliers`
---
-
-INSERT INTO `suppliers` (`id`, `name`, `contact_person`, `email`, `phone`, `address`, `notes`, `created_at`, `updated_at`) VALUES
-(1, 'earlNatiks', 'Earl', 'earl@gmail.com', '09199284675', 'Matina', NULL, '2025-04-10 02:11:33', '2025-04-10 02:11:33');
-
 -- --------------------------------------------------------
 
 --
@@ -392,7 +378,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `remember_token`, `created_at`, `updated_at`, `role_id`) VALUES
-(1, 'dexter', 'dexter@gmail.com', NULL, '$2y$12$j9Q43uj4Dkkr8omb2C1qpu2lSfyhXKsWcR41W4q9..fGVIdAY25aa', NULL, '2025-04-10 02:09:55', '2025-04-10 02:09:55', NULL);
+(1, 'dexter', 'dexter@gmail.com', NULL, '$2y$12$b.pcm88Px.orzx0uetw.ZuQK56bhWk02fJwNRxtnnD6P7udev0ahO', NULL, '2025-04-13 06:14:25', '2025-04-13 06:14:25', NULL);
 
 --
 -- Indexes for dumped tables
@@ -461,7 +447,8 @@ ALTER TABLE `job_batches`
 -- Indexes for table `locations`
 --
 ALTER TABLE `locations`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `locations_floor_number_area_type_room_number_unique` (`floor_number`,`area_type`,`room_number`);
 
 --
 -- Indexes for table `migrations`
@@ -541,7 +528,7 @@ ALTER TABLE `audit_logs`
 -- AUTO_INCREMENT for table `categories`
 --
 ALTER TABLE `categories`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `failed_jobs`
@@ -553,13 +540,13 @@ ALTER TABLE `failed_jobs`
 -- AUTO_INCREMENT for table `inventory`
 --
 ALTER TABLE `inventory`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `items`
 --
 ALTER TABLE `items`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `jobs`
@@ -571,7 +558,7 @@ ALTER TABLE `jobs`
 -- AUTO_INCREMENT for table `locations`
 --
 ALTER TABLE `locations`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT for table `migrations`
@@ -583,13 +570,13 @@ ALTER TABLE `migrations`
 -- AUTO_INCREMENT for table `purchase_orders`
 --
 ALTER TABLE `purchase_orders`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `purchase_order_items`
 --
 ALTER TABLE `purchase_order_items`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `roles`
@@ -607,7 +594,7 @@ ALTER TABLE `stock_movements`
 -- AUTO_INCREMENT for table `suppliers`
 --
 ALTER TABLE `suppliers`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `users`
