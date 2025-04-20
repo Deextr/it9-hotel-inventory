@@ -11,11 +11,15 @@ use Illuminate\Http\Request;
 class InventoryViewController extends Controller
 {
     // Display inventory stock view
-    public function index()
+    public function index(Request $request)
     {
         $items = Item::with(['category', 'inventory'])
+            ->when($request->search, function($query, $search) {
+                return $query->where('name', 'like', "%{$search}%")
+                             ->orWhere('description', 'like', "%{$search}%");
+            })
             ->orderBy('name')
-            ->get();
+            ->paginate(10);
             
         $categories = Category::all();
         
@@ -23,12 +27,16 @@ class InventoryViewController extends Controller
     }
     
     // Display items by category
-    public function byCategory(Category $category)
+    public function byCategory(Category $category, Request $request)
     {
         $items = Item::with('inventory')
             ->where('category_id', $category->id)
+            ->when($request->search, function($query, $search) {
+                return $query->where('name', 'like', "%{$search}%")
+                             ->orWhere('description', 'like', "%{$search}%");
+            })
             ->orderBy('name')
-            ->get();
+            ->paginate(10);
             
         $categories = Category::all();
         

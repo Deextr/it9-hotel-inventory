@@ -7,9 +7,36 @@ use Illuminate\Http\Request;
 
 class SupplierController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $suppliers = Supplier::latest()->paginate(10);
+        $query = Supplier::query();
+        
+        // Filter by status if requested
+        if ($request->has('status')) {
+            if ($request->status === 'active') {
+                $query->where('is_active', true);
+            } elseif ($request->status === 'inactive') {
+                $query->where('is_active', false);
+            }
+        }
+        
+        // Search functionality
+        if ($request->filled('search')) {
+            $searchTerm = $request->search;
+            $query->where(function($q) use ($searchTerm) {
+                $q->where('name', 'like', "%{$searchTerm}%")
+                    ->orWhere('contact_person', 'like', "%{$searchTerm}%")
+                    ->orWhere('email', 'like', "%{$searchTerm}%")
+                    ->orWhere('phone', 'like', "%{$searchTerm}%");
+            });
+        }
+        
+        // Order by name instead of date
+        $suppliers = $query->orderBy('name')->paginate(10);
+        
+        // Preserve query parameters in pagination links
+        $suppliers->appends($request->query());
+        
         return view('inventory.suppliers.index', compact('suppliers'));
     }
 
@@ -27,7 +54,13 @@ class SupplierController extends Controller
             'phone' => 'required|string|max:20',
             'address' => 'required|string',
             'notes' => 'nullable|string',
+            'is_active' => 'boolean',
         ]);
+        
+        // Set is_active to true if not present
+        if (!isset($validated['is_active'])) {
+            $validated['is_active'] = true;
+        }
 
         Supplier::create($validated);
 
@@ -49,7 +82,13 @@ class SupplierController extends Controller
             'phone' => 'required|string|max:20',
             'address' => 'required|string',
             'notes' => 'nullable|string',
+            'is_active' => 'boolean',
         ]);
+        
+        // Set is_active to false if not present in request
+        if (!isset($validated['is_active'])) {
+            $validated['is_active'] = false;
+        }
 
         $supplier->update($validated);
 
@@ -63,5 +102,15 @@ class SupplierController extends Controller
 
         return redirect()->route('inventory.suppliers.index')
             ->with('success', 'Supplier deleted successfully.');
+    }
+    
+    public function toggleStatus(Supplier $supplier)
+    {
+        $supplier->is_active = !$supplier->is_active;
+        $supplier->save();
+        
+        $status = $supplier->is_active ? 'active' : 'inactive';
+        return redirect()->route('inventory.suppliers.index')
+            ->with('success', "Supplier has been set to {$status}.");
     }
 }

@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use App\Traits\Auditable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Location extends Model
 {
-    use HasFactory;
+    use HasFactory, Auditable;
 
     /**
      * The attributes that are mass assignable.
@@ -31,6 +32,7 @@ class Location extends Model
     protected $casts = [
         'floor_number' => 'integer',
         'is_active' => 'boolean',
+        'room_number' => 'integer',
     ];
 
     /**
@@ -41,5 +43,31 @@ class Location extends Model
         return "Floor {$this->floor_number} - " . 
                ucfirst($this->area_type) . 
                ($this->room_number ? " {$this->room_number}" : "");
+    }
+
+    /**
+     * Get the stock movements where this location is the source.
+     */
+    public function stockOutMovements()
+    {
+        return $this->hasMany(StockMovement::class, 'from_location_id');
+    }
+
+    /**
+     * Get the stock movements where this location is the destination.
+     */
+    public function stockInMovements()
+    {
+        return $this->hasMany(StockMovement::class, 'to_location_id');
+    }
+
+    /**
+     * Get all items in this location.
+     */
+    public function items()
+    {
+        return $this->belongsToMany(Item::class, 'location_items')
+                    ->withPivot('quantity')
+                    ->withTimestamps();
     }
 } 

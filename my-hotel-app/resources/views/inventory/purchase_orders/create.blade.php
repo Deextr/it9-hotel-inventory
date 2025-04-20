@@ -58,8 +58,13 @@
                                 <template x-for="(item, index) in items" :key="index">
                                     <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4 pb-4 border-b border-gray-200">
                                         <div>
-                                            <label :for="'items['+index+'][item_name]'" class="block text-sm font-medium text-gray-700">Item Name</label>
-                                            <input type="text" :name="'items['+index+'][item_name]'" x-model="item.item_name" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" required>
+                                            <label :for="'items['+index+'][item_id]'" class="block text-sm font-medium text-gray-700">Item</label>
+                                            <select :name="'items['+index+'][item_id]'" x-model="item.item_id" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" required>
+                                                <option value="">Select Item</option>
+                                                @foreach ($items as $itemOption)
+                                                    <option value="{{ $itemOption->id }}">{{ $itemOption->name }}</option>
+                                                @endforeach
+                                            </select>
                                         </div>
                                         <div>
                                             <label :for="'items['+index+'][quantity]'" class="block text-sm font-medium text-gray-700">Quantity</label>
@@ -72,7 +77,7 @@
                                         <div class="flex items-end">
                                             <div class="flex-grow">
                                                 <label class="block text-sm font-medium text-gray-700">Subtotal</label>
-                                                <div class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-gray-100 rounded-md shadow-sm sm:text-sm" x-text="'$' + (item.subtotal ? item.subtotal.toFixed(2) : '0.00')"></div>
+                                                <div class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-gray-100 rounded-md shadow-sm sm:text-sm" x-text="'₱' + (item.subtotal ? item.subtotal.toFixed(2) : '0.00')"></div>
                                             </div>
                                             <button type="button" class="ml-2 mb-2 text-red-600 hover:text-red-900" @click="removeItem(index)" x-show="items.length > 1">
                                                 <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -92,7 +97,7 @@
                                     </button>
                                     <div class="text-right">
                                         <span class="text-sm font-medium text-gray-700">Total Amount:</span>
-                                        <span class="ml-2 text-lg font-bold text-gray-900" x-text="'$' + calculateTotal().toFixed(2)"></span>
+                                        <span class="ml-2 text-lg font-bold text-gray-900" x-text="'₱' + calculateTotal().toFixed(2)"></span>
                                     </div>
                                 </div>
                             </div>
@@ -117,7 +122,7 @@
             return {
                 items: [
                     {
-                        item_name: '',
+                        item_id: '',
                         quantity: 1,
                         unit_price: 0,
                         subtotal: 0
@@ -125,7 +130,7 @@
                 ],
                 addItem() {
                     this.items.push({
-                        item_name: '',
+                        item_id: '',
                         quantity: 1,
                         unit_price: 0,
                         subtotal: 0

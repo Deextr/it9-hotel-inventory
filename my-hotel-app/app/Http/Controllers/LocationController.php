@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Location;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use App\Models\StockMovement;
 
 class LocationController extends Controller
 {
@@ -44,8 +45,8 @@ class LocationController extends Controller
         // Order results
         $locations = $query->orderBy('floor_number')
                            ->orderBy('area_type')
-                           ->orderBy('room_number')
-                           ->paginate(15)
+                           ->orderByRaw('CAST(room_number AS UNSIGNED)')
+                           ->paginate(10)
                            ->withQueryString();
         
         // Get area types for dropdown
@@ -84,7 +85,7 @@ class LocationController extends Controller
             'name' => 'required|string|max:255',
             'floor_number' => 'required|integer|min:0',
             'area_type' => ['required', Rule::in(array_keys($this->getAreaTypes()))],
-            'room_number' => 'nullable|string|max:20',
+            'room_number' => 'nullable|integer|min:0',
             'description' => 'nullable|string|max:1000',
         ]);
 
@@ -124,10 +125,11 @@ class LocationController extends Controller
         $errors = [];
 
         for ($i = $request->start_number; $i <= $request->end_number; $i++) {
-            $roomNumber = $request->prefix . $i;
+            $roomNumber = $i; // Store as integer
+            $displayNumber = $request->prefix ? $request->prefix . $i : $i; // For display purposes only
             
             // Generate name based on floor, area and room number
-            $name = "Floor {$request->floor_number} " . ucfirst($request->area_type) . " {$roomNumber}";
+            $name = "Floor {$request->floor_number} " . ucfirst($request->area_type) . " {$displayNumber}";
             
             // Check for duplicate
             $exists = Location::where('floor_number', $request->floor_number)
@@ -145,7 +147,7 @@ class LocationController extends Controller
                 ]);
                 $count++;
             } else {
-                $errors[] = "Location with Room {$roomNumber} already exists.";
+                $errors[] = "Location with Room {$displayNumber} already exists.";
             }
         }
 
@@ -180,7 +182,7 @@ class LocationController extends Controller
             'name' => 'required|string|max:255',
             'floor_number' => 'required|integer|min:0',
             'area_type' => ['required', Rule::in(array_keys($this->getAreaTypes()))],
-            'room_number' => 'nullable|string|max:20',
+            'room_number' => 'nullable|integer|min:0',
             'description' => 'nullable|string|max:1000',
             'is_active' => 'boolean',
         ]);
@@ -228,11 +230,30 @@ class LocationController extends Controller
             'room' => 'Room',
             'kitchen' => 'Kitchen',
             'hallway' => 'Hallway',
-            'reception' => 'Reception', 
+            // 'reception' => 'Reception', 
             'restaurant' => 'Restaurant',
-            'office' => 'Office',
+            // 'office' => 'Office',
             'storage' => 'Storage',
             'other' => 'Other',
         ];
+    }
+
+    /**
+     * Display the specified location with its assigned items.
+     */
+    public function show(Location $location)
+    {
+        // Eager load items relationship
+        $location->load('items');
+        
+        // Get recent stock movements for this location
+        $stockMovements = StockMovement::where('to_location_id', $location->id)
+                                   ->orWhere('from_location_id', $location->id)
+                                   ->with('item')
+                                   ->orderBy('created_at', 'desc')
+                                   ->limit(20)
+                                   ->get();
+        
+        return view('locations.show', compact('location', 'stockMovements'));
     }
 } 

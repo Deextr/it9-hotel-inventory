@@ -9,7 +9,7 @@
                 </h2>
                 <div class="flex space-x-2">
                     <a href="{{ route('inventory.purchase_orders.show', $purchaseOrder) }}" class="btn-secondary">
-                        Cancel
+                        Cancel Order
                     </a>
                     <a href="{{ route('inventory.purchase_orders.index') }}" class="btn-secondary">
                         Back to Purchase Orders
@@ -64,8 +64,13 @@
                                 <template x-for="(item, index) in items" :key="index">
                                     <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4 pb-4 border-b border-gray-200">
                                         <div>
-                                            <label :for="'items['+index+'][item_name]'" class="block text-sm font-medium text-gray-700">Item Name</label>
-                                            <input type="text" :name="'items['+index+'][item_name]'" x-model="item.item_name" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" required>
+                                            <label :for="'items['+index+'][item_id]'" class="block text-sm font-medium text-gray-700">Item</label>
+                                            <select :name="'items['+index+'][item_id]'" x-model="item.item_id" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" required>
+                                                <option value="">Select Item</option>
+                                                @foreach ($items as $itemOption)
+                                                    <option value="{{ $itemOption->id }}">{{ $itemOption->name }}</option>
+                                                @endforeach
+                                            </select>
                                             <input type="hidden" :name="'items['+index+'][id]'" x-model="item.id">
                                         </div>
                                         <div>
@@ -124,7 +129,7 @@
             return {
                 items: existingItems.map(item => ({
                     id: item.id,
-                    item_name: item.item_name,
+                    item_id: item.item_id,
                     quantity: parseFloat(item.quantity),
                     unit_price: parseFloat(item.unit_price),
                     subtotal: parseFloat(item.subtotal)
@@ -132,7 +137,7 @@
                 addItem() {
                     this.items.push({
                         id: null,
-                        item_name: '',
+                        item_id: '',
                         quantity: 1,
                         unit_price: 0,
                         subtotal: 0
@@ -151,9 +156,9 @@
                     return this.items.reduce((total, item) => total + (item.quantity * item.unit_price), 0);
                 },
                 formatCurrency(value) {
-                    return new Intl.NumberFormat('en-US', {
+                    return new Intl.NumberFormat('en-PH', {
                         style: 'currency',
-                        currency: 'USD'
+                        currency: 'PHP'
                     }).format(value);
                 }
             };

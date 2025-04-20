@@ -26,11 +26,11 @@
                                 @error('name') <span class="mt-2 text-sm text-red-600">{{ $message }}</span> @enderror
                             </div>
 
-                            <div>
-                                <label for="category_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Category</label>
-                                <select id="category_id" name="category_id" required class="mt-1 input-field block w-full">
+                            <div class="mb-4">
+                                <label for="category_id" class="block text-sm font-medium text-gray-700">Category</label>
+                                <select name="category_id" id="category_id" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                     <option value="">Select Category</option>
-                                    @foreach($categories as $category)
+                                    @foreach ($categories as $category)
                                         <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>
                                             {{ $category->name }}
                                         </option>
@@ -40,9 +40,17 @@
                             </div>
 
                             <div class="md:col-span-2">
-                                <label for="description" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Description</label>
-                                <textarea id="description" name="description" class="mt-1 input-field block w-full" rows="3">{{ old('description') }}</textarea>
+                                <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
+                                <textarea name="description" id="description" rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">{{ old('description') }}</textarea>
                                 @error('description') <span class="mt-2 text-sm text-red-600">{{ $message }}</span> @enderror
+                            </div>
+
+                            <div class="mb-4">
+                                <div class="flex items-center">
+                                    <input id="is_active" name="is_active" type="checkbox" value="1" checked class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                                    <label for="is_active" class="ml-2 block text-sm text-gray-900">Active</label>
+                                </div>
+                                <p class="mt-1 text-sm text-gray-500">Inactive items won't be displayed in selection lists and can't be assigned to locations.</p>
                             </div>
                         </div>
 

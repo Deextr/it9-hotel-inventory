@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 13, 2025 at 04:22 PM
+-- Generation Time: Apr 20, 2025 at 07:57 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -29,15 +29,32 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `audit_logs` (
   `id` bigint(20) UNSIGNED NOT NULL,
-  `user_id` bigint(20) UNSIGNED NOT NULL,
+  `user_id` bigint(20) UNSIGNED DEFAULT NULL,
   `action` varchar(255) NOT NULL,
-  `table_name` varchar(255) NOT NULL,
-  `record_id` bigint(20) UNSIGNED NOT NULL,
-  `old_values` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`old_values`)),
-  `new_values` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`new_values`)),
+  `table_name` varchar(255) DEFAULT NULL,
+  `record_id` bigint(20) UNSIGNED DEFAULT NULL,
+  `old_values` text DEFAULT NULL,
+  `new_values` text DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `audit_logs`
+--
+
+INSERT INTO `audit_logs` (`id`, `user_id`, `action`, `table_name`, `record_id`, `old_values`, `new_values`, `created_at`, `updated_at`) VALUES
+(1, 1, 'login', 'users', 1, NULL, NULL, '2025-04-19 07:18:15', '2025-04-19 07:18:15'),
+(2, 1, 'logout', 'users', 1, NULL, NULL, '2025-04-19 07:23:59', '2025-04-19 07:23:59'),
+(3, 1, 'login', 'users', 1, NULL, NULL, '2025-04-19 07:24:05', '2025-04-19 07:24:05'),
+(4, NULL, 'system', 'audit_logs', 1, '\"{\\\"status\\\":\\\"empty\\\"}\"', '\"{\\\"status\\\":\\\"test_log_1745076344\\\"}\"', '2025-04-19 07:25:44', '2025-04-19 07:25:44'),
+(5, NULL, 'system', 'audit_logs', 1, '\"{\\\"status\\\":\\\"empty\\\"}\"', '\"{\\\"status\\\":\\\"test_log_1745076345\\\"}\"', '2025-04-19 07:25:45', '2025-04-19 07:25:45'),
+(6, 1, 'created', 'suppliers', 3, NULL, '{\"name\":\"Bayonyon\",\"contact_person\":\"YonaBa\",\"email\":\"bayoniks@gmail.com\",\"phone\":\"0981122431\",\"address\":\"Bokayo, Buhangin\",\"notes\":null,\"is_active\":true,\"updated_at\":\"2025-04-19 15:52:06\",\"created_at\":\"2025-04-19 15:52:06\",\"id\":3}', '2025-04-19 07:52:06', '2025-04-19 07:52:06'),
+(7, 1, 'updated', 'suppliers', 3, '{\"is_active\":true,\"updated_at\":\"2025-04-19T15:52:06.000000Z\"}', '{\"id\":3,\"name\":\"Bayonyon\",\"contact_person\":\"YonaBa\",\"email\":\"bayoniks@gmail.com\",\"phone\":\"0981122431\",\"address\":\"Bokayo, Buhangin\",\"notes\":null,\"is_active\":false,\"created_at\":\"2025-04-19 15:52:06\",\"updated_at\":\"2025-04-19 15:52:28\"}', '2025-04-19 07:52:28', '2025-04-19 07:52:28'),
+(8, 1, 'login', 'users', 1, NULL, NULL, '2025-04-19 20:39:39', '2025-04-19 20:39:39'),
+(9, 1, 'logout', 'users', 1, NULL, NULL, '2025-04-19 20:46:11', '2025-04-19 20:46:11'),
+(10, 2, 'login', 'users', 2, NULL, NULL, '2025-04-19 20:53:53', '2025-04-19 20:53:53'),
+(11, 2, 'created', 'items', 10, NULL, '{\"name\":\"unique bed\",\"description\":\"unique ni\",\"category_id\":\"1\",\"is_active\":\"1\",\"updated_at\":\"2025-04-20 05:40:23\",\"created_at\":\"2025-04-20 05:40:23\",\"id\":10}', '2025-04-19 21:40:23', '2025-04-19 21:40:23');
 
 -- --------------------------------------------------------
 
@@ -73,9 +90,20 @@ CREATE TABLE `categories` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `name` varchar(255) NOT NULL,
   `description` text DEFAULT NULL,
+  `is_active` tinyint(1) NOT NULL DEFAULT 1,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `categories`
+--
+
+INSERT INTO `categories` (`id`, `name`, `description`, `is_active`, `created_at`, `updated_at`) VALUES
+(1, 'BED', NULL, 1, '2025-04-15 05:51:35', '2025-04-17 06:14:35'),
+(2, 'silverware', NULL, 1, '2025-04-15 05:52:39', '2025-04-15 05:52:39'),
+(3, 'Refrigerator', NULL, 1, '2025-04-15 05:52:59', '2025-04-15 05:52:59'),
+(4, 'Aircon', NULL, 1, '2025-04-15 05:53:05', '2025-04-17 06:00:04');
 
 -- --------------------------------------------------------
 
@@ -111,6 +139,20 @@ CREATE TABLE `inventory` (
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+--
+-- Dumping data for table `inventory`
+--
+
+INSERT INTO `inventory` (`id`, `item_id`, `current_stock`, `reorder_level`, `last_stocked_at`, `supplier_name`, `purchase_order_id`, `created_at`, `updated_at`) VALUES
+(1, 1, 50, 10, '2025-04-15 13:57:03', 'earlNatiks', 1, '2025-04-15 05:57:03', '2025-04-15 06:13:23'),
+(2, 2, 100, 10, '2025-04-15 13:57:03', 'earlNatiks', 1, '2025-04-15 05:57:03', '2025-04-15 05:57:03'),
+(3, 3, 50, 10, '2025-04-15 13:57:03', 'earlNatiks', 1, '2025-04-15 05:57:03', '2025-04-15 06:13:23'),
+(4, 4, 100, 10, '2025-04-15 13:57:03', 'earlNatiks', 1, '2025-04-15 05:57:03', '2025-04-15 05:57:03'),
+(5, 8, 100, 10, '2025-04-15 13:57:03', 'earlNatiks', 1, '2025-04-15 05:57:03', '2025-04-15 05:57:03'),
+(6, 7, 100, 10, '2025-04-15 13:57:03', 'earlNatiks', 1, '2025-04-15 05:57:03', '2025-04-15 05:57:03'),
+(8, 6, 32, 10, '2025-04-15 13:57:03', 'earlNatiks', 1, '2025-04-15 05:57:03', '2025-04-15 06:31:31'),
+(9, 5, 100, 10, '2025-04-15 14:07:03', 'earlNatiks', 3, '2025-04-15 06:07:03', '2025-04-15 06:07:03');
+
 -- --------------------------------------------------------
 
 --
@@ -122,9 +164,52 @@ CREATE TABLE `items` (
   `name` varchar(255) NOT NULL,
   `description` text DEFAULT NULL,
   `category_id` bigint(20) UNSIGNED NOT NULL,
+  `is_active` tinyint(1) NOT NULL DEFAULT 1,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `items`
+--
+
+INSERT INTO `items` (`id`, `name`, `description`, `category_id`, `is_active`, `created_at`, `updated_at`) VALUES
+(1, 'Massive Bed', 'dako na bed', 1, 1, '2025-04-15 05:53:20', '2025-04-15 05:53:20'),
+(2, 'Small Bed', 'gamay na bed', 1, 1, '2025-04-15 05:53:30', '2025-04-15 05:53:30'),
+(3, 'Knife', 'kutsilyo', 2, 1, '2025-04-15 05:53:44', '2025-04-15 05:53:44'),
+(4, 'Spoon', 'kutsra', 2, 0, '2025-04-15 05:53:58', '2025-04-17 05:54:39'),
+(5, 'Small  Ref', 'gamay ref', 3, 1, '2025-04-15 05:54:13', '2025-04-15 05:54:13'),
+(6, 'Big Ref', 'dako', 3, 1, '2025-04-15 05:54:25', '2025-04-15 05:54:25'),
+(7, 'Non Split', 'dili split', 4, 1, '2025-04-15 05:54:49', '2025-04-15 05:54:49'),
+(8, 'Split Type', 'Split', 4, 1, '2025-04-15 05:54:58', '2025-04-15 05:54:58'),
+(10, 'unique bed', 'unique ni', 1, 1, '2025-04-19 21:40:23', '2025-04-19 21:40:23');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `item_pullouts`
+--
+
+CREATE TABLE `item_pullouts` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `item_id` bigint(20) UNSIGNED NOT NULL,
+  `location_id` bigint(20) UNSIGNED NOT NULL,
+  `quantity` int(11) NOT NULL,
+  `reason` varchar(255) NOT NULL,
+  `status` enum('pending','approved','rejected','completed') NOT NULL DEFAULT 'pending',
+  `user_id` bigint(20) UNSIGNED NOT NULL,
+  `notes` text DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `item_pullouts`
+--
+
+INSERT INTO `item_pullouts` (`id`, `item_id`, `location_id`, `quantity`, `reason`, `status`, `user_id`, `notes`, `created_at`, `updated_at`) VALUES
+(7, 1, 18, 2, 'Damaged', 'completed', 1, NULL, '2025-04-18 07:44:28', '2025-04-18 07:44:28'),
+(8, 3, 2, 2, 'Defective', 'completed', 1, NULL, '2025-04-18 07:47:07', '2025-04-18 07:47:07');
 
 -- --------------------------------------------------------
 
@@ -184,27 +269,65 @@ CREATE TABLE `locations` (
 --
 
 INSERT INTO `locations` (`id`, `name`, `floor_number`, `area_type`, `room_number`, `description`, `is_active`, `created_at`, `updated_at`) VALUES
-(1, 'Floor 2 - Room 1', 2, 'room', '1', 'new room', 0, '2025-04-13 06:14:45', '2025-04-13 06:21:47'),
-(2, 'Floor 4 Room RM101101', 4, 'room', 'RM101101', 'rooms', 1, '2025-04-13 06:15:31', '2025-04-13 06:15:31'),
-(3, 'Floor 4 Room RM101102', 4, 'room', 'RM101102', 'rooms', 1, '2025-04-13 06:15:31', '2025-04-13 06:15:31'),
-(4, 'Floor 4 Room RM101103', 4, 'room', 'RM101103', 'rooms', 1, '2025-04-13 06:15:31', '2025-04-13 06:15:31'),
-(5, 'Floor 4 Room RM101104', 4, 'room', 'RM101104', 'rooms', 1, '2025-04-13 06:15:31', '2025-04-13 06:15:31'),
-(6, 'Floor 4 Room RM101105', 4, 'room', 'RM101105', 'rooms', 1, '2025-04-13 06:15:31', '2025-04-13 06:15:31'),
-(7, 'Floor 4 Room RM101106', 4, 'room', 'RM101106', 'rooms', 1, '2025-04-13 06:15:31', '2025-04-13 06:15:31'),
-(8, 'Floor 4 Room RM101107', 4, 'room', 'RM101107', 'rooms', 1, '2025-04-13 06:15:31', '2025-04-13 06:15:31'),
-(9, 'Floor 4 Room RM101108', 4, 'room', 'RM101108', 'rooms', 1, '2025-04-13 06:15:31', '2025-04-13 06:15:31'),
-(10, 'Floor 4 Room RM101109', 4, 'room', 'RM101109', 'rooms', 1, '2025-04-13 06:15:31', '2025-04-13 06:15:31'),
-(11, 'Floor 4 Room RM101110', 4, 'room', 'RM101110', 'rooms', 1, '2025-04-13 06:15:31', '2025-04-13 06:15:31'),
-(12, 'Floor 4 Room RM101111', 4, 'room', 'RM101111', 'rooms', 1, '2025-04-13 06:15:31', '2025-04-13 06:15:31'),
-(13, 'Floor 4 Room RM101112', 4, 'room', 'RM101112', 'rooms', 1, '2025-04-13 06:15:31', '2025-04-13 06:15:31'),
-(14, 'Floor 4 Room RM101113', 4, 'room', 'RM101113', 'rooms', 1, '2025-04-13 06:15:31', '2025-04-13 06:15:31'),
-(15, 'Floor 4 Room RM101114', 4, 'room', 'RM101114', 'rooms', 1, '2025-04-13 06:15:31', '2025-04-13 06:15:31'),
-(16, 'Floor 4 Room RM101115', 4, 'room', 'RM101115', 'rooms', 1, '2025-04-13 06:15:31', '2025-04-13 06:15:31'),
-(17, 'Floor 4 Room RM101116', 4, 'room', 'RM101116', 'rooms', 1, '2025-04-13 06:15:31', '2025-04-13 06:15:31'),
-(18, 'Floor 4 Room RM101117', 4, 'room', 'RM101117', 'rooms', 1, '2025-04-13 06:15:31', '2025-04-13 06:15:31'),
-(19, 'Floor 4 Room RM101118', 4, 'room', 'RM101118', 'rooms', 1, '2025-04-13 06:15:31', '2025-04-13 06:15:31'),
-(20, 'Floor 4 Room RM101119', 4, 'room', 'RM101119', 'rooms', 1, '2025-04-13 06:15:31', '2025-04-13 06:15:31'),
-(21, 'Floor 4 Room RM101120', 4, 'room', 'RM101120', 'rooms', 1, '2025-04-13 06:15:31', '2025-04-13 06:15:31');
+(1, 'Floor 1 Room 1', 1, 'room', '1', 'rooms', 1, '2025-04-15 06:08:04', '2025-04-15 06:08:04'),
+(2, 'Floor 1 Room 2', 1, 'room', '2', 'rooms', 1, '2025-04-15 06:08:04', '2025-04-15 06:08:04'),
+(3, 'Floor 1 Room 3', 1, 'room', '3', 'rooms', 1, '2025-04-15 06:08:04', '2025-04-15 06:08:04'),
+(4, 'Floor 1 Room 4', 1, 'room', '4', 'rooms', 1, '2025-04-15 06:08:04', '2025-04-15 06:08:04'),
+(5, 'Floor 1 Room 5', 1, 'room', '5', 'rooms', 1, '2025-04-15 06:08:04', '2025-04-15 06:08:04'),
+(6, 'Floor 1 Room 6', 1, 'room', '6', 'rooms', 1, '2025-04-15 06:08:04', '2025-04-15 06:08:04'),
+(7, 'Floor 1 Room 7', 1, 'room', '7', 'rooms', 1, '2025-04-15 06:08:04', '2025-04-15 06:08:04'),
+(8, 'Floor 1 Room 8', 1, 'room', '8', 'rooms', 1, '2025-04-15 06:08:04', '2025-04-15 06:08:04'),
+(9, 'Floor 1 Room 9', 1, 'room', '9', 'rooms', 1, '2025-04-15 06:08:04', '2025-04-15 06:08:04'),
+(10, 'Floor 1 Room 10', 1, 'room', '10', 'rooms', 1, '2025-04-15 06:08:04', '2025-04-15 06:08:04'),
+(11, 'Floor 1 - Hallway', 1, 'hallway', NULL, 'hallways', 1, '2025-04-15 06:08:37', '2025-04-15 06:08:37'),
+(12, 'Floor 2 Kitchen 1', 2, 'kitchen', '1', 'kitchens', 1, '2025-04-15 06:09:13', '2025-04-15 06:09:13'),
+(13, 'Floor 2 Kitchen 2', 2, 'kitchen', '2', 'kitchens', 1, '2025-04-15 06:09:13', '2025-04-15 06:09:13'),
+(14, 'Floor 2 Kitchen 3', 2, 'kitchen', '3', 'kitchens', 1, '2025-04-15 06:09:13', '2025-04-15 06:09:13'),
+(15, 'Floor 2 Kitchen 4', 2, 'kitchen', '4', 'kitchens', 1, '2025-04-15 06:09:13', '2025-04-15 06:09:13'),
+(16, 'Floor 2 Kitchen 5', 2, 'kitchen', '5', 'kitchens', 1, '2025-04-15 06:09:13', '2025-04-15 06:09:13'),
+(17, 'Floor 0 - Storage', 0, 'storage', NULL, 'store', 0, '2025-04-15 06:09:37', '2025-04-15 06:09:56'),
+(18, 'Floor 5 - Restaurant', 5, 'restaurant', NULL, 'res', 1, '2025-04-15 06:35:19', '2025-04-15 06:35:19');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `location_items`
+--
+
+CREATE TABLE `location_items` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `location_id` bigint(20) UNSIGNED NOT NULL,
+  `item_id` bigint(20) UNSIGNED NOT NULL,
+  `quantity` int(11) NOT NULL DEFAULT 0,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `location_items`
+--
+
+INSERT INTO `location_items` (`id`, `location_id`, `item_id`, `quantity`, `created_at`, `updated_at`) VALUES
+(1, 1, 1, 3, '2025-04-15 06:13:23', '2025-04-16 06:47:10'),
+(2, 2, 1, 10, '2025-04-15 06:13:23', '2025-04-15 06:13:23'),
+(3, 3, 1, 10, '2025-04-15 06:13:23', '2025-04-15 06:13:23'),
+(4, 4, 1, 10, '2025-04-15 06:13:23', '2025-04-15 06:13:23'),
+(5, 5, 1, 10, '2025-04-15 06:13:23', '2025-04-15 06:13:23'),
+(6, 1, 3, 8, '2025-04-15 06:13:23', '2025-04-16 07:01:31'),
+(7, 2, 3, 8, '2025-04-15 06:13:23', '2025-04-15 06:13:23'),
+(8, 3, 3, 10, '2025-04-15 06:13:23', '2025-04-15 06:13:23'),
+(9, 4, 3, 10, '2025-04-15 06:13:23', '2025-04-15 06:13:23'),
+(10, 5, 3, 10, '2025-04-15 06:13:23', '2025-04-15 06:13:23'),
+(11, 1, 6, 10, '2025-04-15 06:13:23', '2025-04-15 06:13:23'),
+(12, 2, 6, 10, '2025-04-15 06:13:23', '2025-04-15 06:13:23'),
+(13, 3, 6, 10, '2025-04-15 06:13:23', '2025-04-15 06:13:23'),
+(14, 4, 6, 10, '2025-04-15 06:13:23', '2025-04-15 06:13:23'),
+(15, 5, 6, 10, '2025-04-15 06:13:23', '2025-04-15 06:13:23'),
+(16, 12, 6, 10, '2025-04-15 06:31:08', '2025-04-15 06:31:08'),
+(17, 13, 6, 5, '2025-04-15 06:31:08', '2025-04-15 06:31:08'),
+(18, 14, 6, 3, '2025-04-15 06:31:31', '2025-04-15 06:31:31'),
+(19, 18, 1, 5, '2025-04-16 06:47:10', '2025-04-16 06:47:10'),
+(20, 18, 3, 2, '2025-04-16 07:01:31', '2025-04-16 07:01:31');
 
 -- --------------------------------------------------------
 
@@ -235,7 +358,14 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (10, '2025_03_20_133945_create_stock_movements_table', 1),
 (11, '2025_03_20_133955_create_purchase_orders_table', 1),
 (12, '2025_03_20_134005_create_purchase_order_items_table', 1),
-(13, '2025_03_20_134016_create_audit_logs_table', 1);
+(13, '2025_03_20_134016_create_audit_logs_table', 1),
+(14, '2025_04_15_134811_create_location_items_table', 1),
+(15, '2023_03_20_add_is_active_to_categories_table', 2),
+(16, '2023_03_20_add_is_active_to_items_table', 2),
+(17, '2023_03_20_add_is_active_to_suppliers_table', 2),
+(18, '2024_03_25_000000_create_item_pullouts_table', 3),
+(19, '2025_04_18_000000_update_stock_movements_type_column', 4),
+(20, '2024_04_15_000000_create_audit_logs_table', 5);
 
 -- --------------------------------------------------------
 
@@ -266,6 +396,14 @@ CREATE TABLE `purchase_orders` (
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+--
+-- Dumping data for table `purchase_orders`
+--
+
+INSERT INTO `purchase_orders` (`id`, `supplier_id`, `order_date`, `status`, `delivered_date`, `total_amount`, `created_at`, `updated_at`) VALUES
+(3, 1, '2025-04-15', 'delivered', '2025-04-15', 10000.00, '2025-04-15 06:06:20', '2025-04-15 06:07:03'),
+(4, 1, '2025-04-20', 'pending', NULL, 1230.00, '2025-04-19 21:29:46', '2025-04-19 21:29:46');
+
 -- --------------------------------------------------------
 
 --
@@ -282,6 +420,14 @@ CREATE TABLE `purchase_order_items` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `purchase_order_items`
+--
+
+INSERT INTO `purchase_order_items` (`id`, `purchase_order_id`, `item_name`, `quantity`, `unit_price`, `subtotal`, `created_at`, `updated_at`) VALUES
+(13, 3, 'Small  Ref', 100, 100.00, 10000.00, '2025-04-15 06:06:56', '2025-04-15 06:06:56'),
+(14, 4, 'Big Ref', 123, 10.00, 1230.00, '2025-04-19 21:29:46', '2025-04-19 21:29:46');
 
 -- --------------------------------------------------------
 
@@ -316,7 +462,7 @@ CREATE TABLE `sessions` (
 --
 
 INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
-('axdaFDv1YE0VFxwuCRGUZwstgQsnUHbCNna2Kqpf', 1, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiY2pnUGZ4UkZJNXRnNm8yYWp4czlja0RVS2xxbTJNMWlwTVIwb1drNyI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MzE6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9sb2NhdGlvbnMiO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX1zOjUwOiJsb2dpbl93ZWJfNTliYTM2YWRkYzJiMmY5NDAxNTgwZjAxNGM3ZjU4ZWE0ZTMwOTg5ZCI7aToxO30=', 1744554128);
+('cpJSeJbkW6u5gx4lj9CBmf2v0INxQ7IN00RhqXKP', 2, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiNUZIUnFDa0lGU0ZMS3lCN0tlcFY2RGdsdzk1WmpXTWdUYnN4YU9MNiI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MzE6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMC9kYXNoYm9hcmQiO31zOjUwOiJsb2dpbl93ZWJfNTliYTM2YWRkYzJiMmY5NDAxNTgwZjAxNGM3ZjU4ZWE0ZTMwOTg5ZCI7aToyO30=', 1745128628);
 
 -- --------------------------------------------------------
 
@@ -330,12 +476,40 @@ CREATE TABLE `stock_movements` (
   `from_location_id` bigint(20) UNSIGNED DEFAULT NULL,
   `to_location_id` bigint(20) UNSIGNED DEFAULT NULL,
   `quantity` int(11) NOT NULL,
-  `type` enum('in','out','transfer') NOT NULL,
+  `type` enum('in','out','transfer','pullout') DEFAULT NULL,
   `user_id` bigint(20) UNSIGNED NOT NULL,
   `notes` text DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `stock_movements`
+--
+
+INSERT INTO `stock_movements` (`id`, `item_id`, `from_location_id`, `to_location_id`, `quantity`, `type`, `user_id`, `notes`, `created_at`, `updated_at`) VALUES
+(1, 1, NULL, 1, 10, 'out', 1, 'stock ta boy', '2025-04-15 06:13:23', '2025-04-15 06:13:23'),
+(2, 1, NULL, 2, 10, 'out', 1, 'stock ta boy', '2025-04-15 06:13:23', '2025-04-15 06:13:23'),
+(3, 1, NULL, 3, 10, 'out', 1, 'stock ta boy', '2025-04-15 06:13:23', '2025-04-15 06:13:23'),
+(4, 1, NULL, 4, 10, 'out', 1, 'stock ta boy', '2025-04-15 06:13:23', '2025-04-15 06:13:23'),
+(5, 1, NULL, 5, 10, 'out', 1, 'stock ta boy', '2025-04-15 06:13:23', '2025-04-15 06:13:23'),
+(6, 3, NULL, 1, 10, 'out', 1, 'stock ta boy', '2025-04-15 06:13:23', '2025-04-15 06:13:23'),
+(7, 3, NULL, 2, 10, 'out', 1, 'stock ta boy', '2025-04-15 06:13:23', '2025-04-15 06:13:23'),
+(8, 3, NULL, 3, 10, 'out', 1, 'stock ta boy', '2025-04-15 06:13:23', '2025-04-15 06:13:23'),
+(9, 3, NULL, 4, 10, 'out', 1, 'stock ta boy', '2025-04-15 06:13:23', '2025-04-15 06:13:23'),
+(10, 3, NULL, 5, 10, 'out', 1, 'stock ta boy', '2025-04-15 06:13:23', '2025-04-15 06:13:23'),
+(11, 6, NULL, 1, 10, 'out', 1, 'stock ta boy', '2025-04-15 06:13:23', '2025-04-15 06:13:23'),
+(12, 6, NULL, 2, 10, 'out', 1, 'stock ta boy', '2025-04-15 06:13:23', '2025-04-15 06:13:23'),
+(13, 6, NULL, 3, 10, 'out', 1, 'stock ta boy', '2025-04-15 06:13:23', '2025-04-15 06:13:23'),
+(14, 6, NULL, 4, 10, 'out', 1, 'stock ta boy', '2025-04-15 06:13:23', '2025-04-15 06:13:23'),
+(15, 6, NULL, 5, 10, 'out', 1, 'stock ta boy', '2025-04-15 06:13:23', '2025-04-15 06:13:23'),
+(16, 6, NULL, 12, 10, 'out', 1, 'qwerty', '2025-04-15 06:31:08', '2025-04-15 06:31:08'),
+(17, 6, NULL, 13, 5, 'out', 1, 'qwerty', '2025-04-15 06:31:08', '2025-04-15 06:31:08'),
+(18, 6, NULL, 14, 3, 'out', 1, NULL, '2025-04-15 06:31:31', '2025-04-15 06:31:31'),
+(19, 1, 1, 18, 7, 'transfer', 1, NULL, '2025-04-16 06:47:10', '2025-04-16 06:47:10'),
+(20, 3, 1, 18, 2, 'transfer', 1, NULL, '2025-04-16 07:01:31', '2025-04-16 07:01:31'),
+(21, 1, 18, NULL, 2, 'out', 1, 'Pullout: Damaged', '2025-04-18 07:44:28', '2025-04-18 07:44:28'),
+(22, 3, 2, NULL, 2, 'out', 1, 'Pullout: Defective', '2025-04-18 07:47:07', '2025-04-18 07:47:07');
 
 -- --------------------------------------------------------
 
@@ -351,9 +525,19 @@ CREATE TABLE `suppliers` (
   `phone` varchar(255) NOT NULL,
   `address` text NOT NULL,
   `notes` text DEFAULT NULL,
+  `is_active` tinyint(1) NOT NULL DEFAULT 1,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `suppliers`
+--
+
+INSERT INTO `suppliers` (`id`, `name`, `contact_person`, `email`, `phone`, `address`, `notes`, `is_active`, `created_at`, `updated_at`) VALUES
+(1, 'earlNatiks', 'Earl', 'earl@gmail.com', '09199284675', 'Matina', 'qwe', 1, '2025-04-15 05:55:16', '2025-04-15 05:55:16'),
+(2, 'gabSoy', 'Gabrielle', 'gab@gmail.com', '0999888222', 'Cabaguio', '2ndni', 0, '2025-04-17 06:01:16', '2025-04-17 06:01:46'),
+(3, 'Bayonyon', 'YonaBa', 'bayoniks@gmail.com', '0981122431', 'Bokayo, Buhangin', NULL, 0, '2025-04-19 07:52:06', '2025-04-19 07:52:28');
 
 -- --------------------------------------------------------
 
@@ -378,7 +562,8 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `remember_token`, `created_at`, `updated_at`, `role_id`) VALUES
-(1, 'dexter', 'dexter@gmail.com', NULL, '$2y$12$b.pcm88Px.orzx0uetw.ZuQK56bhWk02fJwNRxtnnD6P7udev0ahO', NULL, '2025-04-13 06:14:25', '2025-04-13 06:14:25', NULL);
+(1, 'dexter', 'dexter@gmail.com', NULL, '$2y$12$qzNlY8nKF9OqHpifHistp.lG8pzxNzUkWg3BKLiMwo.43XpHEQgXC', NULL, '2025-04-15 05:50:22', '2025-04-15 05:50:22', NULL),
+(2, 'EarlSoy', 'earl@gmail.com', NULL, '$2y$12$pJBW/AUm899gMmo3hxnyYutv0GhbZmTkQI9Vj6/oeveAxE2S31DgW', NULL, '2025-04-19 20:53:53', '2025-04-19 20:53:53', NULL);
 
 --
 -- Indexes for dumped tables
@@ -389,7 +574,9 @@ INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `re
 --
 ALTER TABLE `audit_logs`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `audit_logs_user_id_foreign` (`user_id`);
+  ADD KEY `audit_logs_user_id_foreign` (`user_id`),
+  ADD KEY `audit_logs_action_table_name_index` (`action`,`table_name`),
+  ADD KEY `audit_logs_created_at_index` (`created_at`);
 
 --
 -- Indexes for table `cache`
@@ -431,6 +618,15 @@ ALTER TABLE `items`
   ADD KEY `items_category_id_foreign` (`category_id`);
 
 --
+-- Indexes for table `item_pullouts`
+--
+ALTER TABLE `item_pullouts`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `item_pullouts_item_id_foreign` (`item_id`),
+  ADD KEY `item_pullouts_location_id_foreign` (`location_id`),
+  ADD KEY `item_pullouts_user_id_foreign` (`user_id`);
+
+--
 -- Indexes for table `jobs`
 --
 ALTER TABLE `jobs`
@@ -449,6 +645,14 @@ ALTER TABLE `job_batches`
 ALTER TABLE `locations`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `locations_floor_number_area_type_room_number_unique` (`floor_number`,`area_type`,`room_number`);
+
+--
+-- Indexes for table `location_items`
+--
+ALTER TABLE `location_items`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `location_items_location_id_item_id_unique` (`location_id`,`item_id`),
+  ADD KEY `location_items_item_id_foreign` (`item_id`);
 
 --
 -- Indexes for table `migrations`
@@ -522,13 +726,13 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `audit_logs`
 --
 ALTER TABLE `audit_logs`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `categories`
 --
 ALTER TABLE `categories`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `failed_jobs`
@@ -540,13 +744,19 @@ ALTER TABLE `failed_jobs`
 -- AUTO_INCREMENT for table `inventory`
 --
 ALTER TABLE `inventory`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `items`
 --
 ALTER TABLE `items`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+
+--
+-- AUTO_INCREMENT for table `item_pullouts`
+--
+ALTER TABLE `item_pullouts`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `jobs`
@@ -558,25 +768,31 @@ ALTER TABLE `jobs`
 -- AUTO_INCREMENT for table `locations`
 --
 ALTER TABLE `locations`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+
+--
+-- AUTO_INCREMENT for table `location_items`
+--
+ALTER TABLE `location_items`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT for table `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT for table `purchase_orders`
 --
 ALTER TABLE `purchase_orders`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `purchase_order_items`
 --
 ALTER TABLE `purchase_order_items`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `roles`
@@ -588,19 +804,19 @@ ALTER TABLE `roles`
 -- AUTO_INCREMENT for table `stock_movements`
 --
 ALTER TABLE `stock_movements`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
 -- AUTO_INCREMENT for table `suppliers`
 --
 ALTER TABLE `suppliers`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- Constraints for dumped tables
@@ -610,7 +826,7 @@ ALTER TABLE `users`
 -- Constraints for table `audit_logs`
 --
 ALTER TABLE `audit_logs`
-  ADD CONSTRAINT `audit_logs_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `audit_logs_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL;
 
 --
 -- Constraints for table `inventory`
@@ -623,6 +839,21 @@ ALTER TABLE `inventory`
 --
 ALTER TABLE `items`
   ADD CONSTRAINT `items_category_id_foreign` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `item_pullouts`
+--
+ALTER TABLE `item_pullouts`
+  ADD CONSTRAINT `item_pullouts_item_id_foreign` FOREIGN KEY (`item_id`) REFERENCES `items` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `item_pullouts_location_id_foreign` FOREIGN KEY (`location_id`) REFERENCES `locations` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `item_pullouts_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `location_items`
+--
+ALTER TABLE `location_items`
+  ADD CONSTRAINT `location_items_item_id_foreign` FOREIGN KEY (`item_id`) REFERENCES `items` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `location_items_location_id_foreign` FOREIGN KEY (`location_id`) REFERENCES `locations` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `purchase_orders`

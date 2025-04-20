@@ -105,7 +105,7 @@
                                     @endif
                                     <div>
                                         <p class="text-sm font-medium text-gray-500">Total Amount</p>
-                                        <p class="mt-1">${{ number_format($purchaseOrder->total_amount, 2) }}</p>
+                                        <p class="mt-1">₱{{ number_format($purchaseOrder->total_amount, 2) }}</p>
                                     </div>
                                 </div>
                             </div>
@@ -151,8 +151,8 @@
                                     <tr>
                                         <td class="px-6 py-4 whitespace-nowrap">{{ $item->item_name }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap">{{ $item->quantity }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap">${{ number_format($item->unit_price, 2) }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap">${{ number_format($item->subtotal, 2) }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap">₱{{ number_format($item->unit_price, 2) }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap">₱{{ number_format($item->subtotal, 2) }}</td>
                                     </tr>
                                 @empty
                                     <tr>
@@ -161,7 +161,7 @@
                                 @endforelse
                                 <tr class="bg-gray-50">
                                     <td colspan="3" class="px-6 py-4 whitespace-nowrap text-right font-medium">Total:</td>
-                                    <td class="px-6 py-4 whitespace-nowrap font-bold">${{ number_format($purchaseOrder->total_amount, 2) }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap font-bold">₱{{ number_format($purchaseOrder->total_amount, 2) }}</td>
                                 </tr>
                             </tbody>
                         </table>

@@ -13,6 +13,25 @@ class PurchaseOrderItem extends Model
         'unit_price',
         'subtotal',
     ];
+    
+    protected $appends = [
+        'item_id',
+    ];
+    
+    // Initially null, will be set in the controller when needed
+    protected $item_id = null;
+    
+    // Getter for the item_id attribute
+    public function getItemIdAttribute()
+    {
+        return $this->item_id;
+    }
+    
+    // Setter for the item_id attribute
+    public function setItemIdAttribute($value)
+    {
+        $this->item_id = $value;
+    }
 
     public function purchaseOrder()
     {

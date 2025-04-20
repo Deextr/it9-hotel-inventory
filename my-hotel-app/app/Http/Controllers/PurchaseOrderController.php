@@ -12,16 +12,49 @@ use Illuminate\Support\Facades\DB;
 
 class PurchaseOrderController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $purchaseOrders = PurchaseOrder::with('supplier')->latest()->paginate(10);
+        $query = PurchaseOrder::with('supplier');
+        
+        // Filter by status
+        if ($request->has('status')) {
+            $status = $request->input('status');
+            if (in_array($status, ['pending', 'delivered', 'canceled'])) {
+                $query->where('status', $status);
+            }
+        }
+        
+        // Search functionality
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where(function($q) use ($search) {
+                $q->where('id', 'like', "%{$search}%")
+                  ->orWhereHas('supplier', function($q) use ($search) {
+                      $q->where('name', 'like', "%{$search}%");
+                  });
+            });
+        }
+        
+        // Sort results
+        $sortField = $request->input('sort', 'order_date');
+        $sortDirection = $request->input('direction', 'desc');
+        
+        if (in_array($sortField, ['id', 'order_date', 'total_amount', 'status'])) {
+            $query->orderBy($sortField, $sortDirection);
+        } else {
+            $query->latest('order_date');
+        }
+        
+        $purchaseOrders = $query->paginate(10)->withQueryString();
+        
         return view('inventory.purchase_orders.index', compact('purchaseOrders'));
     }
 
     public function create()
     {
-        $suppliers = Supplier::all();
-        return view('inventory.purchase_orders.create', compact('suppliers'));
+        $suppliers = Supplier::where('is_active', true)->get();
+        $items = Item::where('is_active', true)->orderBy('name')->get();
+        return view('inventory.purchase_orders.create', compact('suppliers', 'items'));
     }
 
     public function store(Request $request)
@@ -30,7 +63,7 @@ class PurchaseOrderController extends Controller
             'supplier_id' => 'required|exists:suppliers,id',
             'order_date' => 'required|date',
             'items' => 'required|array|min:1',
-            'items.*.item_name' => 'required|string',
+            'items.*.item_id' => 'required|exists:items,id',
             'items.*.quantity' => 'required|integer|min:1',
             'items.*.unit_price' => 'required|numeric|min:0',
         ]);
@@ -53,13 +86,14 @@ class PurchaseOrderController extends Controller
             ]);
 
             // Create purchase order items
-            foreach ($validated['items'] as $item) {
-                $subtotal = $item['quantity'] * $item['unit_price'];
+            foreach ($validated['items'] as $itemData) {
+                $item = Item::findOrFail($itemData['item_id']);
+                $subtotal = $itemData['quantity'] * $itemData['unit_price'];
                 PurchaseOrderItem::create([
                     'purchase_order_id' => $purchaseOrder->id,
-                    'item_name' => $item['item_name'],
-                    'quantity' => $item['quantity'],
-                    'unit_price' => $item['unit_price'],
+                    'item_name' => $item->name,
+                    'quantity' => $itemData['quantity'],
+                    'unit_price' => $itemData['unit_price'],
                     'subtotal' => $subtotal,
                 ]);
             }
@@ -88,8 +122,16 @@ class PurchaseOrderController extends Controller
         }
         
         $suppliers = Supplier::all();
+        $items = Item::orderBy('name')->get();
         $purchaseOrder->load('items');
-        return view('inventory.purchase_orders.edit', compact('purchaseOrder', 'suppliers'));
+        
+        // Map existing items to include their item_id based on name matching
+        foreach ($purchaseOrder->items as $orderItem) {
+            $item = Item::where('name', $orderItem->item_name)->first();
+            $orderItem->item_id = $item ? $item->id : null;
+        }
+        
+        return view('inventory.purchase_orders.edit', compact('purchaseOrder', 'suppliers', 'items'));
     }
 
     public function update(Request $request, PurchaseOrder $purchaseOrder)
@@ -103,7 +145,7 @@ class PurchaseOrderController extends Controller
             'supplier_id' => 'required|exists:suppliers,id',
             'items' => 'required|array|min:1',
             'items.*.id' => 'nullable|exists:purchase_order_items,id',
-            'items.*.item_name' => 'required|string',
+            'items.*.item_id' => 'required|exists:items,id',
             'items.*.quantity' => 'required|integer|min:1',
             'items.*.unit_price' => 'required|numeric|min:0',
         ]);
@@ -127,13 +169,14 @@ class PurchaseOrderController extends Controller
             $purchaseOrder->items()->delete();
 
             // Create new purchase order items
-            foreach ($validated['items'] as $item) {
-                $subtotal = $item['quantity'] * $item['unit_price'];
+            foreach ($validated['items'] as $itemData) {
+                $item = Item::findOrFail($itemData['item_id']);
+                $subtotal = $itemData['quantity'] * $itemData['unit_price'];
                 PurchaseOrderItem::create([
                     'purchase_order_id' => $purchaseOrder->id,
-                    'item_name' => $item['item_name'],
-                    'quantity' => $item['quantity'],
-                    'unit_price' => $item['unit_price'],
+                    'item_name' => $item->name,
+                    'quantity' => $itemData['quantity'],
+                    'unit_price' => $itemData['unit_price'],
                     'subtotal' => $subtotal,
                 ]);
             }
