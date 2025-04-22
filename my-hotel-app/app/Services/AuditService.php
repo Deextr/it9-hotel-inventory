@@ -96,9 +96,9 @@ class AuditService
     }
     
     /**
-     * Create an audit log entry
+     * Create a custom audit log entry
      */
-    private static function createLog($action, $tableName, $recordId, $oldValues = null, $newValues = null)
+    public static function createLog($action, $tableName, $recordId, $oldValues = null, $newValues = null)
     {
         return AuditLog::create([
             'user_id' => Auth::id(),

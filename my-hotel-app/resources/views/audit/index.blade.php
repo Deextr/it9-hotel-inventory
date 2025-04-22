@@ -179,6 +179,7 @@
                                                 'deleted' => 'bg-red-100 text-red-800',
                                                 'login' => 'bg-purple-100 text-purple-800',
                                                 'logout' => 'bg-yellow-100 text-yellow-800',
+                                                'status_changed' => 'bg-indigo-100 text-indigo-800',
                                                 default => 'bg-gray-100 text-gray-800'
                                             } }}">
                                                 {{ match($log->action) {
@@ -187,6 +188,7 @@
                                                     'deleted' => 'Deleted',
                                                     'login' => 'Logged in',
                                                     'logout' => 'Logged out',
+                                                    'status_changed' => 'Status Changed',
                                                     default => ucfirst($log->action)
                                                 } }}
                                             </span>
@@ -204,6 +206,19 @@
                                                 User logged out of the system
                                             @elseif ($log->action === 'system')
                                                 System event
+                                            @elseif ($log->action === 'status_changed' && $log->table_name === 'purchase_orders')
+                                                @php
+                                                    $newStatus = $log->new_values['status'] ?? null;
+                                                    $specificAction = $log->new_values['action'] ?? null;
+                                                @endphp
+                                                
+                                                @if ($specificAction === 'marked_as_delivered')
+                                                    Marked Purchase Order #{{ $log->record_id }} as Delivered
+                                                @elseif ($specificAction === 'marked_as_canceled')
+                                                    Marked Purchase Order #{{ $log->record_id }} as Canceled
+                                                @else
+                                                    Changed Purchase Order #{{ $log->record_id }} status to {{ ucfirst($newStatus) }}
+                                                @endif
                                             @else
                                                 {{ ucfirst($log->action) }} {{ ucwords(str_replace('_', ' ', $log->table_name)) }} record #{{ $log->record_id }}
                                             @endif

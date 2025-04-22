@@ -10,6 +10,8 @@ use App\Models\Supplier;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class InventoryReportController extends Controller
 {
@@ -88,60 +90,69 @@ class InventoryReportController extends Controller
      */
     public function export(Request $request)
     {
-        $period = $request->query('period', 'daily');
-        $date = $request->query('date', Carbon::now()->format('Y-m-d'));
-        $selectedDate = Carbon::parse($date);
-        
-        // Get date range
-        [$startDate, $endDate, $dateFormat, $previousPeriod, $nextPeriod] = $this->getDateRange($period, $selectedDate);
-        
-        // Get data for the report
-        $summary = $this->getInventorySummary($startDate, $endDate);
-        $stockMovements = StockMovement::whereBetween('created_at', [$startDate, $endDate])
-            ->with(['item', 'fromLocation', 'toLocation'])
-            ->orderBy('created_at', 'desc')
-            ->limit(100)
-            ->get();
-        
-        $topItems = StockMovement::whereBetween('created_at', [$startDate, $endDate])
-            ->select('item_id', DB::raw('SUM(quantity) as total_quantity'))
-            ->groupBy('item_id')
-            ->with('item')
-            ->orderBy('total_quantity', 'desc')
-            ->limit(10)
-            ->get();
-        
-        // Define the report title based on period
-        $reportTitle = "Inventory Report - ";
-        if ($period == 'daily') {
-            $reportTitle .= "Daily (" . $selectedDate->format($dateFormat) . ")";
-        } elseif ($period == 'weekly') {
-            $reportTitle .= "Weekly (" . $startDate->format('M d') . " - " . $endDate->format('M d, Y') . ")";
-        } elseif ($period == 'monthly') {
-            $reportTitle .= "Monthly (" . $selectedDate->format($dateFormat) . ")";
-        } elseif ($period == 'yearly') {
-            $reportTitle .= "Yearly (" . $selectedDate->format($dateFormat) . ")";
+        try {
+            $period = $request->query('period', 'daily');
+            $date = $request->query('date', Carbon::now()->format('Y-m-d'));
+            $selectedDate = Carbon::parse($date);
+            
+            // Get date range
+            [$startDate, $endDate, $dateFormat, $previousPeriod, $nextPeriod] = $this->getDateRange($period, $selectedDate);
+            
+            // Get data for the report
+            $summary = $this->getInventorySummary($startDate, $endDate);
+            $stockMovements = StockMovement::whereBetween('created_at', [$startDate, $endDate])
+                ->with(['item', 'fromLocation', 'toLocation'])
+                ->orderBy('created_at', 'desc')
+                ->limit(100)
+                ->get();
+            
+            $topItems = StockMovement::whereBetween('created_at', [$startDate, $endDate])
+                ->select('item_id', DB::raw('SUM(quantity) as total_quantity'))
+                ->groupBy('item_id')
+                ->with('item')
+                ->orderBy('total_quantity', 'desc')
+                ->limit(10)
+                ->get();
+            
+            // Define the report title based on period
+            $reportTitle = "Inventory Report - ";
+            if ($period == 'daily') {
+                $reportTitle .= "Daily (" . $selectedDate->format($dateFormat) . ")";
+            } elseif ($period == 'weekly') {
+                $reportTitle .= "Weekly (" . $startDate->format('M d') . " - " . $endDate->format('M d, Y') . ")";
+            } elseif ($period == 'monthly') {
+                $reportTitle .= "Monthly (" . $selectedDate->format($dateFormat) . ")";
+            } elseif ($period == 'yearly') {
+                $reportTitle .= "Yearly (" . $selectedDate->format($dateFormat) . ")";
+            }
+            
+            // Prepare data for PDF generation
+            $data = [
+                'title' => $reportTitle,
+                'period' => $period,
+                'startDate' => $startDate,
+                'endDate' => $endDate,
+                'summary' => $summary,
+                'stockMovements' => $stockMovements,
+                'topItems' => $topItems,
+                'generatedAt' => now()->format('F d, Y H:i:s')
+            ];
+            
+            // Generate PDF using DomPDF
+            $pdf = Pdf::loadView('inventory.reports.pdf', $data);
+            
+            // Set paper size and orientation
+            $pdf->setPaper('a4', 'portrait');
+            
+            // Generate the filename
+            $filename = 'inventory_report_' . $period . '_' . $date . '.pdf';
+            
+            // Download the PDF
+            return $pdf->download($filename);
+        } catch (\Exception $e) {
+            Log::error('PDF Generation Error: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Could not generate PDF: ' . $e->getMessage());
         }
-        
-        // For PDF generation, we'll use a view to render the PDF content
-        $data = [
-            'title' => $reportTitle,
-            'period' => $period,
-            'startDate' => $startDate,
-            'endDate' => $endDate,
-            'summary' => $summary,
-            'stockMovements' => $stockMovements,
-            'topItems' => $topItems,
-            'generatedAt' => now()->format('F d, Y H:i:s')
-        ];
-        
-        // In a real application, you would use a PDF package like dompdf
-        // For this example, we'll just return a view that could be used for PDF generation
-        return view('inventory.reports.pdf', $data);
-        
-        // With a package like barryvdh/laravel-dompdf, it would be like:
-        // $pdf = \PDF::loadView('inventory.reports.pdf', $data);
-        // return $pdf->download('inventory_report_' . $period . '_' . $date . '.pdf');
     }
     
     /**

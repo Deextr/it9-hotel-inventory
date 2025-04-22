@@ -53,6 +53,7 @@ class AuditLog extends Model
             'deleted' => 'Deleted',
             'login' => 'Logged in',
             'logout' => 'Logged out',
+            'status_changed' => 'Status Changed',
         ];
 
         return $labels[$this->action] ?? ucfirst($this->action);
@@ -69,6 +70,7 @@ class AuditLog extends Model
             'deleted' => 'bg-red-100 text-red-800',
             'login' => 'bg-purple-100 text-purple-800',
             'logout' => 'bg-yellow-100 text-yellow-800',
+            'status_changed' => 'bg-indigo-100 text-indigo-800',
             default => 'bg-gray-100 text-gray-800'
         };
     }
@@ -100,6 +102,20 @@ class AuditLog extends Model
 
         $tableName = $this->table_label;
         $recordId = $this->record_id;
+        
+        // Handle special case for purchase order status changes
+        if ($this->action === 'status_changed' && $this->table_name === 'purchase_orders') {
+            $newStatus = $this->new_values['status'] ?? null;
+            $specificAction = $this->new_values['action'] ?? null;
+            
+            if ($specificAction === 'marked_as_delivered') {
+                return "Marked Purchase Order #{$recordId} as Delivered";
+            } elseif ($specificAction === 'marked_as_canceled') {
+                return "Marked Purchase Order #{$recordId} as Canceled";
+            } else {
+                return "Changed Purchase Order #{$recordId} status to " . ucfirst($newStatus);
+            }
+        }
         
         return match($this->action) {
             'created' => "Created new {$tableName} record #{$recordId}",

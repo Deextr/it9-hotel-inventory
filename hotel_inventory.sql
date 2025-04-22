@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 20, 2025 at 07:57 AM
+-- Generation Time: Apr 22, 2025 at 05:26 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -54,7 +54,35 @@ INSERT INTO `audit_logs` (`id`, `user_id`, `action`, `table_name`, `record_id`, 
 (8, 1, 'login', 'users', 1, NULL, NULL, '2025-04-19 20:39:39', '2025-04-19 20:39:39'),
 (9, 1, 'logout', 'users', 1, NULL, NULL, '2025-04-19 20:46:11', '2025-04-19 20:46:11'),
 (10, 2, 'login', 'users', 2, NULL, NULL, '2025-04-19 20:53:53', '2025-04-19 20:53:53'),
-(11, 2, 'created', 'items', 10, NULL, '{\"name\":\"unique bed\",\"description\":\"unique ni\",\"category_id\":\"1\",\"is_active\":\"1\",\"updated_at\":\"2025-04-20 05:40:23\",\"created_at\":\"2025-04-20 05:40:23\",\"id\":10}', '2025-04-19 21:40:23', '2025-04-19 21:40:23');
+(11, 2, 'created', 'items', 10, NULL, '{\"name\":\"unique bed\",\"description\":\"unique ni\",\"category_id\":\"1\",\"is_active\":\"1\",\"updated_at\":\"2025-04-20 05:40:23\",\"created_at\":\"2025-04-20 05:40:23\",\"id\":10}', '2025-04-19 21:40:23', '2025-04-19 21:40:23'),
+(12, 1, 'login', 'users', 1, NULL, NULL, '2025-04-22 03:33:05', '2025-04-22 03:33:05'),
+(13, 1, 'created', 'locations', 21, NULL, '{\"name\":\"Floor 20 - Room 12\",\"floor_number\":\"20\",\"area_type\":\"room\",\"room_number\":\"12\",\"description\":null,\"updated_at\":\"2025-04-22 11:33:50\",\"created_at\":\"2025-04-22 11:33:50\",\"id\":21}', '2025-04-22 03:33:50', '2025-04-22 03:33:50'),
+(14, 1, 'deleted', 'purchase_orders', 4, '{\"id\":4,\"supplier_id\":1,\"order_date\":\"2025-04-20\",\"status\":\"canceled\",\"delivered_date\":null,\"total_amount\":\"1230.00\",\"created_at\":\"2025-04-20 05:29:46\",\"updated_at\":\"2025-04-22 11:34:16\"}', NULL, '2025-04-22 03:36:24', '2025-04-22 03:36:24'),
+(15, 1, 'created', 'purchase_orders', 5, NULL, '{\"supplier_id\":\"1\",\"order_date\":\"2025-04-22 00:00:00\",\"status\":\"pending\",\"total_amount\":100,\"updated_at\":\"2025-04-22 11:37:36\",\"created_at\":\"2025-04-22 11:37:36\",\"id\":5}', '2025-04-22 03:37:36', '2025-04-22 03:37:36'),
+(16, 1, 'updated', 'purchase_orders', 5, '{\"total_amount\":\"100.00\",\"updated_at\":\"2025-04-22T11:37:36.000000Z\"}', '{\"id\":5,\"supplier_id\":\"1\",\"order_date\":\"2025-04-22\",\"status\":\"pending\",\"delivered_date\":null,\"total_amount\":150,\"created_at\":\"2025-04-22 11:37:36\",\"updated_at\":\"2025-04-22 11:37:54\"}', '2025-04-22 03:37:54', '2025-04-22 03:37:54'),
+(17, 1, 'updated', 'purchase_orders', 5, '{\"status\":\"pending\",\"delivered_date\":null,\"updated_at\":\"2025-04-22T11:37:54.000000Z\"}', '{\"id\":5,\"supplier_id\":1,\"order_date\":\"2025-04-22\",\"status\":\"delivered\",\"delivered_date\":\"2025-04-22 11:38:42\",\"total_amount\":\"150.00\",\"created_at\":\"2025-04-22 11:37:36\",\"updated_at\":\"2025-04-22 11:38:42\"}', '2025-04-22 03:38:42', '2025-04-22 03:38:42'),
+(18, 1, 'status_changed', 'purchase_orders', 5, '{\"status\":\"pending\"}', '{\"status\":\"delivered\",\"action\":\"marked_as_delivered\"}', '2025-04-22 03:38:42', '2025-04-22 03:38:42'),
+(19, 1, 'login', 'users', 1, NULL, NULL, '2025-04-22 05:03:43', '2025-04-22 05:03:43'),
+(20, 1, 'created', 'purchase_orders', 6, NULL, '{\"supplier_id\":\"1\",\"order_date\":\"2025-04-22 00:00:00\",\"status\":\"pending\",\"total_amount\":1000,\"updated_at\":\"2025-04-22 14:59:51\",\"created_at\":\"2025-04-22 14:59:51\",\"id\":6}', '2025-04-22 06:59:51', '2025-04-22 06:59:51'),
+(21, 1, 'updated', 'purchase_orders', 6, '{\"status\":\"pending\",\"delivered_date\":null,\"updated_at\":\"2025-04-22T14:59:51.000000Z\"}', '{\"id\":6,\"supplier_id\":1,\"order_date\":\"2025-04-22\",\"status\":\"delivered\",\"delivered_date\":\"2025-04-22 14:59:58\",\"total_amount\":\"1000.00\",\"created_at\":\"2025-04-22 14:59:51\",\"updated_at\":\"2025-04-22 14:59:58\"}', '2025-04-22 06:59:58', '2025-04-22 06:59:58'),
+(22, 1, 'status_changed', 'purchase_orders', 6, '{\"status\":\"pending\"}', '{\"status\":\"delivered\",\"action\":\"marked_as_delivered\"}', '2025-04-22 06:59:58', '2025-04-22 06:59:58'),
+(23, 1, 'created', 'purchase_orders', 7, NULL, '{\"supplier_id\":\"1\",\"order_date\":\"2025-04-22 00:00:00\",\"status\":\"pending\",\"total_amount\":24,\"updated_at\":\"2025-04-22 15:03:46\",\"created_at\":\"2025-04-22 15:03:46\",\"id\":7}', '2025-04-22 07:03:46', '2025-04-22 07:03:46'),
+(24, 1, 'updated', 'purchase_orders', 7, '{\"status\":\"pending\",\"delivered_date\":null,\"updated_at\":\"2025-04-22T15:03:46.000000Z\"}', '{\"id\":7,\"supplier_id\":1,\"order_date\":\"2025-04-22\",\"status\":\"delivered\",\"delivered_date\":\"2025-04-22 15:03:51\",\"total_amount\":\"24.00\",\"created_at\":\"2025-04-22 15:03:46\",\"updated_at\":\"2025-04-22 15:03:51\"}', '2025-04-22 07:03:51', '2025-04-22 07:03:51'),
+(25, 1, 'status_changed', 'purchase_orders', 7, '{\"status\":\"pending\"}', '{\"status\":\"delivered\",\"action\":\"marked_as_delivered\"}', '2025-04-22 07:03:51', '2025-04-22 07:03:51'),
+(26, 1, 'logout', 'users', 1, NULL, NULL, '2025-04-22 07:06:31', '2025-04-22 07:06:31'),
+(27, 1, 'logout', 'users', 1, NULL, NULL, '2025-04-22 07:06:31', '2025-04-22 07:06:31'),
+(28, 1, 'login', 'users', 1, NULL, NULL, '2025-04-22 07:16:40', '2025-04-22 07:16:40'),
+(29, 1, 'login', 'users', 1, NULL, NULL, '2025-04-22 07:16:40', '2025-04-22 07:16:40'),
+(30, 1, 'logout', 'users', 1, NULL, NULL, '2025-04-22 07:23:17', '2025-04-22 07:23:17'),
+(31, 1, 'logout', 'users', 1, NULL, NULL, '2025-04-22 07:23:17', '2025-04-22 07:23:17'),
+(32, 1, 'login', 'users', 1, NULL, NULL, '2025-04-22 07:24:42', '2025-04-22 07:24:42'),
+(33, 1, 'login', 'users', 1, NULL, NULL, '2025-04-22 07:24:42', '2025-04-22 07:24:42'),
+(34, 1, 'logout', 'users', 1, NULL, NULL, '2025-04-22 07:25:07', '2025-04-22 07:25:07'),
+(35, 1, 'logout', 'users', 1, NULL, NULL, '2025-04-22 07:25:07', '2025-04-22 07:25:07'),
+(36, 1, 'login', 'users', 1, NULL, NULL, '2025-04-22 07:25:13', '2025-04-22 07:25:13'),
+(37, 1, 'login', 'users', 1, NULL, NULL, '2025-04-22 07:25:13', '2025-04-22 07:25:13'),
+(38, 1, 'logout', 'users', 1, NULL, NULL, '2025-04-22 07:25:28', '2025-04-22 07:25:28'),
+(39, 1, 'logout', 'users', 1, NULL, NULL, '2025-04-22 07:25:28', '2025-04-22 07:25:28');
 
 -- --------------------------------------------------------
 
@@ -146,10 +174,10 @@ CREATE TABLE `inventory` (
 INSERT INTO `inventory` (`id`, `item_id`, `current_stock`, `reorder_level`, `last_stocked_at`, `supplier_name`, `purchase_order_id`, `created_at`, `updated_at`) VALUES
 (1, 1, 50, 10, '2025-04-15 13:57:03', 'earlNatiks', 1, '2025-04-15 05:57:03', '2025-04-15 06:13:23'),
 (2, 2, 100, 10, '2025-04-15 13:57:03', 'earlNatiks', 1, '2025-04-15 05:57:03', '2025-04-15 05:57:03'),
-(3, 3, 50, 10, '2025-04-15 13:57:03', 'earlNatiks', 1, '2025-04-15 05:57:03', '2025-04-15 06:13:23'),
+(3, 3, 65, 10, '2025-04-22 11:38:42', 'earlNatiks', 5, '2025-04-15 05:57:03', '2025-04-22 03:38:42'),
 (4, 4, 100, 10, '2025-04-15 13:57:03', 'earlNatiks', 1, '2025-04-15 05:57:03', '2025-04-15 05:57:03'),
-(5, 8, 100, 10, '2025-04-15 13:57:03', 'earlNatiks', 1, '2025-04-15 05:57:03', '2025-04-15 05:57:03'),
-(6, 7, 100, 10, '2025-04-15 13:57:03', 'earlNatiks', 1, '2025-04-15 05:57:03', '2025-04-15 05:57:03'),
+(5, 8, 105, 10, '2025-04-22 14:59:58', 'earlNatiks', 6, '2025-04-15 05:57:03', '2025-04-22 06:59:58'),
+(6, 7, 107, 10, '2025-04-22 15:03:51', 'earlNatiks', 7, '2025-04-15 05:57:03', '2025-04-22 07:03:51'),
 (8, 6, 32, 10, '2025-04-15 13:57:03', 'earlNatiks', 1, '2025-04-15 05:57:03', '2025-04-15 06:31:31'),
 (9, 5, 100, 10, '2025-04-15 14:07:03', 'earlNatiks', 3, '2025-04-15 06:07:03', '2025-04-15 06:07:03');
 
@@ -286,7 +314,8 @@ INSERT INTO `locations` (`id`, `name`, `floor_number`, `area_type`, `room_number
 (15, 'Floor 2 Kitchen 4', 2, 'kitchen', '4', 'kitchens', 1, '2025-04-15 06:09:13', '2025-04-15 06:09:13'),
 (16, 'Floor 2 Kitchen 5', 2, 'kitchen', '5', 'kitchens', 1, '2025-04-15 06:09:13', '2025-04-15 06:09:13'),
 (17, 'Floor 0 - Storage', 0, 'storage', NULL, 'store', 0, '2025-04-15 06:09:37', '2025-04-15 06:09:56'),
-(18, 'Floor 5 - Restaurant', 5, 'restaurant', NULL, 'res', 1, '2025-04-15 06:35:19', '2025-04-15 06:35:19');
+(18, 'Floor 5 - Restaurant', 5, 'restaurant', NULL, 'res', 1, '2025-04-15 06:35:19', '2025-04-15 06:35:19'),
+(21, 'Floor 20 - Room 12', 20, 'room', '12', NULL, 1, '2025-04-22 03:33:50', '2025-04-22 03:33:50');
 
 -- --------------------------------------------------------
 
@@ -402,7 +431,9 @@ CREATE TABLE `purchase_orders` (
 
 INSERT INTO `purchase_orders` (`id`, `supplier_id`, `order_date`, `status`, `delivered_date`, `total_amount`, `created_at`, `updated_at`) VALUES
 (3, 1, '2025-04-15', 'delivered', '2025-04-15', 10000.00, '2025-04-15 06:06:20', '2025-04-15 06:07:03'),
-(4, 1, '2025-04-20', 'pending', NULL, 1230.00, '2025-04-19 21:29:46', '2025-04-19 21:29:46');
+(5, 1, '2025-04-22', 'delivered', '2025-04-22', 150.00, '2025-04-22 03:37:36', '2025-04-22 03:38:42'),
+(6, 1, '2025-04-22', 'delivered', '2025-04-22', 1000.00, '2025-04-22 06:59:51', '2025-04-22 06:59:58'),
+(7, 1, '2025-04-22', 'delivered', '2025-04-22', 24.00, '2025-04-22 07:03:46', '2025-04-22 07:03:51');
 
 -- --------------------------------------------------------
 
@@ -427,7 +458,10 @@ CREATE TABLE `purchase_order_items` (
 
 INSERT INTO `purchase_order_items` (`id`, `purchase_order_id`, `item_name`, `quantity`, `unit_price`, `subtotal`, `created_at`, `updated_at`) VALUES
 (13, 3, 'Small  Ref', 100, 100.00, 10000.00, '2025-04-15 06:06:56', '2025-04-15 06:06:56'),
-(14, 4, 'Big Ref', 123, 10.00, 1230.00, '2025-04-19 21:29:46', '2025-04-19 21:29:46');
+(16, 5, 'Knife', 15, 10.00, 150.00, '2025-04-22 03:37:54', '2025-04-22 03:37:54'),
+(17, 6, 'Split Type', 5, 100.00, 500.00, '2025-04-22 06:59:51', '2025-04-22 06:59:51'),
+(18, 6, 'Non Split', 5, 100.00, 500.00, '2025-04-22 06:59:51', '2025-04-22 06:59:51'),
+(19, 7, 'Non Split', 2, 12.00, 24.00, '2025-04-22 07:03:46', '2025-04-22 07:03:46');
 
 -- --------------------------------------------------------
 
@@ -462,7 +496,7 @@ CREATE TABLE `sessions` (
 --
 
 INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
-('cpJSeJbkW6u5gx4lj9CBmf2v0INxQ7IN00RhqXKP', 2, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiNUZIUnFDa0lGU0ZMS3lCN0tlcFY2RGdsdzk1WmpXTWdUYnN4YU9MNiI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MzE6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMC9kYXNoYm9hcmQiO31zOjUwOiJsb2dpbl93ZWJfNTliYTM2YWRkYzJiMmY5NDAxNTgwZjAxNGM3ZjU4ZWE0ZTMwOTg5ZCI7aToyO30=', 1745128628);
+('dWEaFcMrqH8u3DNAiqXCX1nzgohQVbUQmenoqNs9', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoibFdZaGx5NnpQSkNFTTB5RmtXQzNkbzZ2Y1JhTkFiUmhEb21GWE56SCI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6Mjc6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMC9sb2dpbiI7fX0=', 1745335536);
 
 -- --------------------------------------------------------
 
@@ -509,7 +543,8 @@ INSERT INTO `stock_movements` (`id`, `item_id`, `from_location_id`, `to_location
 (19, 1, 1, 18, 7, 'transfer', 1, NULL, '2025-04-16 06:47:10', '2025-04-16 06:47:10'),
 (20, 3, 1, 18, 2, 'transfer', 1, NULL, '2025-04-16 07:01:31', '2025-04-16 07:01:31'),
 (21, 1, 18, NULL, 2, 'out', 1, 'Pullout: Damaged', '2025-04-18 07:44:28', '2025-04-18 07:44:28'),
-(22, 3, 2, NULL, 2, 'out', 1, 'Pullout: Defective', '2025-04-18 07:47:07', '2025-04-18 07:47:07');
+(22, 3, 2, NULL, 2, 'out', 1, 'Pullout: Defective', '2025-04-18 07:47:07', '2025-04-18 07:47:07'),
+(23, 7, NULL, NULL, 2, 'in', 1, 'Stock received from PO #7 (earlNatiks)', '2025-04-22 07:03:51', '2025-04-22 07:03:51');
 
 -- --------------------------------------------------------
 
@@ -726,7 +761,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `audit_logs`
 --
 ALTER TABLE `audit_logs`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
 
 --
 -- AUTO_INCREMENT for table `categories`
@@ -768,7 +803,7 @@ ALTER TABLE `jobs`
 -- AUTO_INCREMENT for table `locations`
 --
 ALTER TABLE `locations`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT for table `location_items`
@@ -786,13 +821,13 @@ ALTER TABLE `migrations`
 -- AUTO_INCREMENT for table `purchase_orders`
 --
 ALTER TABLE `purchase_orders`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `purchase_order_items`
 --
 ALTER TABLE `purchase_order_items`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT for table `roles`
@@ -804,7 +839,7 @@ ALTER TABLE `roles`
 -- AUTO_INCREMENT for table `stock_movements`
 --
 ALTER TABLE `stock_movements`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- AUTO_INCREMENT for table `suppliers`

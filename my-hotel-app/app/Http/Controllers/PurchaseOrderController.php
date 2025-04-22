@@ -9,6 +9,8 @@ use App\Models\Item;
 use App\Models\Inventory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Services\AuditService;
+use Illuminate\Support\Facades\Auth;
 
 class PurchaseOrderController extends Controller
 {
@@ -200,10 +202,22 @@ class PurchaseOrderController extends Controller
         try {
             DB::beginTransaction();
             
+            // Store old status for audit log
+            $oldStatus = $purchaseOrder->status;
+            
             $purchaseOrder->update([
                 'status' => 'delivered',
                 'delivered_date' => now(),
             ]);
+            
+            // Create custom audit log for status change
+            AuditService::createLog(
+                'status_changed',
+                'purchase_orders',
+                $purchaseOrder->id,
+                ['status' => $oldStatus],
+                ['status' => 'delivered', 'action' => 'marked_as_delivered']
+            );
             
             // Process items into inventory
             foreach ($purchaseOrder->items as $orderItem) {
@@ -223,6 +237,17 @@ class PurchaseOrderController extends Controller
                 $inventory->supplier_name = $purchaseOrder->supplier->name;
                 $inventory->purchase_order_id = $purchaseOrder->id;
                 $inventory->save();
+                
+                // Create stock movement record for incoming stock
+                \App\Models\StockMovement::create([
+                    'item_id' => $item->id,
+                    'from_location_id' => null, // Coming from supplier, not an internal location
+                    'to_location_id' => null, // Going to central inventory, not a specific location
+                    'quantity' => $orderItem->quantity,
+                    'type' => 'in',
+                    'user_id' => \Illuminate\Support\Facades\Auth::id(),
+                    'notes' => 'Stock received from PO #' . $purchaseOrder->id . ' (' . $purchaseOrder->supplier->name . ')'
+                ]);
             }
             
             DB::commit();
@@ -242,9 +267,21 @@ class PurchaseOrderController extends Controller
         }
 
         try {
+            // Store old status for audit log
+            $oldStatus = $purchaseOrder->status;
+            
             $purchaseOrder->update([
                 'status' => 'canceled',
             ]);
+            
+            // Create custom audit log for status change
+            AuditService::createLog(
+                'status_changed',
+                'purchase_orders',
+                $purchaseOrder->id,
+                ['status' => $oldStatus],
+                ['status' => 'canceled', 'action' => 'marked_as_canceled']
+            );
 
             return redirect()->route('inventory.purchase_orders.show', $purchaseOrder)
                 ->with('success', 'Purchase order marked as canceled.');

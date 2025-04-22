@@ -20,6 +20,12 @@
                     <span class="block sm:inline">{{ session('success') }}</span>
                 </div>
             @endif
+            
+            @if (session('error'))
+                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+                    <span class="block sm:inline">{{ session('error') }}</span>
+                </div>
+            @endif
 
             <!-- Date Navigation -->
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
@@ -91,7 +97,7 @@
                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"></path>
                                 </svg>
-                                Export PDF
+                                Export to PDF
                             </a>
                         </div>
                     </div>

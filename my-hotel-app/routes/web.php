@@ -140,4 +140,63 @@ Route::get('/api/locations', function (Request $request) {
 
 Route::get('/api/locations/{location}/items', [ItemTransferController::class, 'getLocationItems']);
 
+// API routes for dashboard charts
+Route::prefix('api/inventory')->middleware('auth')->group(function () {
+    // Category distribution chart data
+    Route::get('/category-distribution', function() {
+        $categories = \App\Models\Category::withCount('items')->get();
+        return response()->json([
+            'labels' => $categories->pluck('name'),
+            'data' => $categories->pluck('items_count')
+        ]);
+    });
+    
+    // Stock movement chart data
+    Route::get('/stock-movements', function() {
+        $period = request('period', 'monthly');
+        $limit = request('limit', 6);
+        
+        if ($period === 'monthly') {
+            $startDate = now()->subMonths($limit-1)->startOfMonth();
+            $labels = [];
+            $inData = [];
+            $outData = [];
+            
+            for ($i = 0; $i < $limit; $i++) {
+                $currentDate = clone $startDate;
+                $currentDate->addMonths($i);
+                $labels[] = $currentDate->format('M Y');
+                
+                $monthStart = clone $currentDate;
+                $monthEnd = clone $currentDate->endOfMonth();
+                
+                // Count 'in' movements - delivered purchase orders count as stock in
+                $inCount = \App\Models\StockMovement::where('type', 'in')
+                    ->whereBetween('created_at', [$monthStart, $monthEnd])
+                    ->count();
+                    
+                // Count 'out' movements - assignments and pullouts
+                $outCount = \App\Models\StockMovement::whereIn('type', ['out', 'pullout'])
+                    ->whereBetween('created_at', [$monthStart, $monthEnd])
+                    ->count();
+                    
+                $inData[] = $inCount;
+                $outData[] = $outCount;
+            }
+            
+            return response()->json([
+                'labels' => $labels,
+                'inData' => $inData,
+                'outData' => $outData
+            ]);
+        }
+        
+        return response()->json([
+            'labels' => ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+            'inData' => [12, 19, 3, 5, 2, 3],
+            'outData' => [8, 12, 6, 9, 4, 7]
+        ]);
+    });
+});
+
 require __DIR__.'/auth.php';
