@@ -38,18 +38,21 @@
             color: #666;
             margin-bottom: 5px;
         }
-        .summary-cards {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
+        .summary-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 10px;
             margin-bottom: 30px;
         }
+        .summary-table td {
+            width: 50%;
+            vertical-align: top;
+        }
         .card {
-            width: 23%;
             border: 1px solid #ddd;
             border-radius: 5px;
             padding: 10px;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
             background-color: #f9f9f9;
         }
         .card-title {
@@ -63,17 +66,17 @@
             font-weight: bold;
             margin: 5px 0;
         }
-        table {
+        table.data-table {
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 20px;
         }
-        table th, table td {
+        table.data-table th, table.data-table td {
             border: 1px solid #ddd;
             padding: 8px;
             text-align: left;
         }
-        table th {
+        table.data-table th {
             background-color: #f2f2f2;
             font-weight: bold;
         }
@@ -125,45 +128,69 @@
         </div>
         
         <h2>Summary</h2>
-        <div class="summary-cards">
-            <div class="card">
-                <div class="card-title">Stock Movements</div>
-                <div class="card-value">{{ $summary['stockMovementsCount'] }}</div>
-            </div>
-            <div class="card">
-                <div class="card-title">Items Assigned</div>
-                <div class="card-value">{{ $summary['itemsAssignedCount'] }}</div>
-            </div>
-            <div class="card">
-                <div class="card-title">Items Pulled</div>
-                <div class="card-value">{{ $summary['itemsPulledCount'] }}</div>
-            </div>
-            <div class="card">
-                <div class="card-title">Transfers</div>
-                <div class="card-value">{{ $summary['transfersCount'] }}</div>
-            </div>
-            
-            <div class="card">
-                <div class="card-title">Total Items</div>
-                <div class="card-value">{{ $summary['totalItems'] }}</div>
-            </div>
-            <div class="card">
-                <div class="card-title">Active Items</div>
-                <div class="card-value">{{ $summary['activeItems'] }}</div>
-            </div>
-            <div class="card">
-                <div class="card-title">Purchase Orders</div>
-                <div class="card-value">{{ $summary['purchaseOrdersCount'] }}</div>
-            </div>
-            <div class="card">
-                <div class="card-title">Delivered POs</div>
-                <div class="card-value">{{ $summary['purchaseOrdersDeliveredCount'] }}</div>
-            </div>
-        </div>
+        <table class="summary-table">
+            <tr>
+                <td>
+                    <div class="card">
+                        <div class="card-title">Stock Movements</div>
+                        <div class="card-value">{{ $summary['stockMovementsCount'] }}</div>
+                    </div>
+                </td>
+                <td>
+                    <div class="card">
+                        <div class="card-title">Items Assigned</div>
+                        <div class="card-value">{{ $summary['itemsAssignedCount'] }}</div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="card">
+                        <div class="card-title">Items Pulled</div>
+                        <div class="card-value">{{ $summary['itemsPulledCount'] }}</div>
+                    </div>
+                </td>
+                <td>
+                    <div class="card">
+                        <div class="card-title">Transfers</div>
+                        <div class="card-value">{{ $summary['transfersCount'] }}</div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="card">
+                        <div class="card-title">Total Items</div>
+                        <div class="card-value">{{ $summary['totalItems'] }}</div>
+                    </div>
+                </td>
+                <td>
+                    <div class="card">
+                        <div class="card-title">Active Items</div>
+                        <div class="card-value">{{ $summary['activeItems'] }}</div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="card">
+                        <div class="card-title">Purchase Orders</div>
+                        <div class="card-value">{{ $summary['purchaseOrdersCount'] }}</div>
+                    </div>
+                </td>
+                <td>
+                    <div class="card">
+                        <div class="card-title">Delivered POs</div>
+                        <div class="card-value">{{ $summary['purchaseOrdersDeliveredCount'] }}</div>
+                    </div>
+                </td>
+            </tr>
+        </table>
         
+        <div class="page-break"></div>
         <h2>Top Items</h2>
         @if($topItems->count() > 0)
-            <table>
+            <table class="data-table">
                 <thead>
                     <tr>
                         <th>Item</th>
@@ -189,7 +216,7 @@
         
         <h2>Stock Movement History</h2>
         @if($stockMovements->count() > 0)
-            <table>
+            <table class="data-table">
                 <thead>
                     <tr>
                         <th>Date</th>

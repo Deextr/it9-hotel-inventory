@@ -119,12 +119,24 @@
                 <div class="p-4 bg-white border-b border-gray-200">
                     <label for="category-select" class="block text-sm font-medium text-gray-700 mb-2">Select Category</label>
                     <select id="category-select" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" onchange="window.location.href=this.value">
-                        <option value="{{ route('inventory.view') }}" {{ !isset($category) ? 'selected' : '' }}>All Categories</option>
+                        <option value="{{ route('inventory.view', ['status' => $status ?? '']) }}" {{ !isset($category) ? 'selected' : '' }}>All Categories</option>
                         @foreach($categories as $cat)
-                            <option value="{{ route('inventory.view.category', $cat) }}" {{ isset($category) && $category->id === $cat->id ? 'selected' : '' }}>
+                            <option value="{{ route('inventory.view.category', ['category' => $cat, 'status' => $status ?? '']) }}" {{ isset($category) && $category->id === $cat->id ? 'selected' : '' }}>
                                 {{ $cat->name }}
                             </option>
                         @endforeach
+                    </select>
+                </div>
+            </div>
+
+            <!-- Status Filter for Mobile - Dropdown -->
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6 md:hidden">
+                <div class="p-4 bg-white border-b border-gray-200">
+                    <label for="status-select" class="block text-sm font-medium text-gray-700 mb-2">Filter by Status</label>
+                    <select id="status-select" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" onchange="window.location.href=this.value">
+                        <option value="{{ isset($category) ? route('inventory.view.category', $category) : route('inventory.view') }}" {{ !isset($status) ? 'selected' : '' }}>All Items</option>
+                        <option value="{{ isset($category) ? route('inventory.view.category', ['category' => $category, 'status' => 'active']) : route('inventory.view', ['status' => 'active']) }}" {{ isset($status) && $status === 'active' ? 'selected' : '' }}>Active Items</option>
+                        <option value="{{ isset($category) ? route('inventory.view.category', ['category' => $category, 'status' => 'inactive']) : route('inventory.view', ['status' => 'inactive']) }}" {{ isset($status) && $status === 'inactive' ? 'selected' : '' }}>Inactive Items</option>
                     </select>
                 </div>
             </div>
@@ -133,19 +145,47 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 bg-white border-b border-gray-200">
                     <div class="mb-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                        <h3 class="text-lg font-medium text-gray-900">
-                            @if(isset($category))
-                                {{ $category->name }} Items
-                            @else
-                                All Inventory Items
-                            @endif
-                        </h3>
+                        <div class="flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
+                            <h3 class="text-lg font-medium text-gray-900">
+                                @if(isset($category))
+                                    {{ $category->name }} Items
+                                @else
+                                    All Inventory Items
+                                @endif
+                                @if(isset($status))
+                                    <span class="text-sm text-gray-500 ml-2">({{ ucfirst($status) }} only)</span>
+                                @endif
+                            </h3>
+                            
+                            <!-- Status Filter -->
+                            <div class="flex gap-2">
+                                <a href="{{ isset($category) ? route('inventory.view.category', ['category' => $category->id]) : route('inventory.view') }}" 
+                                   class="px-3 py-1 text-xs font-medium rounded-md transition-colors border
+                                   {{ !isset($status) ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200' }}">
+                                    All
+                                </a>
+                                <a href="{{ isset($category) ? route('inventory.view.category', ['category' => $category->id, 'status' => 'active']) : route('inventory.view', ['status' => 'active']) }}" 
+                                   class="px-3 py-1 text-xs font-medium rounded-md transition-colors border
+                                   {{ isset($status) && $status === 'active' ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200' }}">
+                                    Active
+                                </a>
+                                <a href="{{ isset($category) ? route('inventory.view.category', ['category' => $category->id, 'status' => 'inactive']) : route('inventory.view', ['status' => 'inactive']) }}" 
+                                   class="px-3 py-1 text-xs font-medium rounded-md transition-colors border
+                                   {{ isset($status) && $status === 'inactive' ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200' }}">
+                                    Inactive
+                                </a>
+                            </div>
+                        </div>
                         
                         <div>
-                            <form action="{{ route('inventory.view') }}" method="GET" class="flex">
+                            <form action="{{ isset($category) ? route('inventory.view.category', $category) : route('inventory.view') }}" method="GET" class="flex">
+                                @if(isset($status))
+                                    <input type="hidden" name="status" value="{{ $status }}">
+                                @endif
                                 <input type="text" name="search" placeholder="Search items..." 
                                        class="block w-full rounded-l-md border-gray-300 shadow-sm 
-                                              focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                                              focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                                       value="{{ request()->search }}">
                                 <button type="submit" 
                                         class="inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent 
                                                rounded-r-md font-semibold text-xs text-white uppercase tracking-widest 
@@ -167,7 +207,7 @@
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Stock</th>
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Last Updated</th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Supplier</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Stock Level</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
@@ -218,8 +258,35 @@
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                             {{ $item->inventory && $item->inventory->last_stocked_at ? $item->inventory->last_stocked_at->format('Y-m-d H:i') : 'Never' }}
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                            {{ $item->inventory && $item->inventory->supplier_name ? $item->inventory->supplier_name : 'N/A' }}
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            @php
+                                                $stockLevel = $item->getCurrentStock();
+                                                $reorderLevel = $item->inventory ? $item->inventory->reorder_level : 0;
+                                                
+                                                if ($reorderLevel > 0) {
+                                                    $ratio = $stockLevel > 0 ? $stockLevel / $reorderLevel : 0;
+                                                } else {
+                                                    $ratio = $stockLevel > 0 ? 1 : 0;
+                                                }
+                                            @endphp
+                                            
+                                            @if ($stockLevel <= 0)
+                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                                                    Need to Order
+                                                </span>
+                                            @elseif ($ratio <= 0.25)
+                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                                                    Critical
+                                                </span>
+                                            @elseif ($ratio <= 0.5)
+                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                                                    Warning
+                                                </span>
+                                            @else
+                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                                    Good
+                                                </span>
+                                            @endif
                                         </td>
                                     </tr>
                                 @empty

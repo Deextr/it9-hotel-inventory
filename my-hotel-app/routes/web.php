@@ -36,6 +36,7 @@ Route::middleware('auth')->group(function () {
     // Inventory Reports
     Route::get('inventory/reports', [InventoryReportController::class, 'index'])->name('inventory.reports.index');
     Route::get('inventory/reports/export', [InventoryReportController::class, 'export'])->name('inventory.reports.export');
+    Route::get('inventory/reports/export-excel', [InventoryReportController::class, 'exportExcel'])->name('inventory.reports.export.excel');
     
     // Toggle status routes
     Route::patch('inventory/items/{item}/toggle-status', [ItemController::class, 'toggleStatus'])->name('inventory.items.toggle-status');
