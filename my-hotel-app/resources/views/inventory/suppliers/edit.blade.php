@@ -63,11 +63,6 @@
                                     <span class="mt-2 text-sm text-red-600">{{ $message }}</span>
                                 @enderror
                             </div>
-
-                            <div class="md:col-span-2">
-                                <label for="notes" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Notes</label>
-                                <textarea name="notes" id="notes" rows="3" class="mt-1 input-field block w-full">{{ old('notes', $supplier->notes) }}</textarea>
-                            </div>
                         </div>
 
                         <div class="flex items-center justify-end mt-6">

@@ -9,7 +9,7 @@
                 </h2>
                 <div class="flex space-x-2">
                     <a href="{{ route('inventory.purchase_orders.show', $purchaseOrder) }}" class="btn-secondary">
-                        Cancel Order
+                        Cancel
                     </a>
                     <a href="{{ route('inventory.purchase_orders.index') }}" class="btn-secondary">
                         Back to Purchase Orders
@@ -29,10 +29,20 @@
                 </div>
             @endif
 
+            @if ($errors->any())
+                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+                    <strong class="font-bold">Error!</strong>
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 bg-white border-b border-gray-200">
-                    <form action="{{ route('inventory.purchase_orders.update', $purchaseOrder) }}" method="POST" 
-                          x-data="purchaseOrderForm({{ json_encode($purchaseOrder->items) }})">
+                    <form action="{{ route('inventory.purchase_orders.update', $purchaseOrder) }}" method="POST">
                         @csrf
                         @method('PUT')
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
@@ -58,63 +68,137 @@
                             </div>
                         </div>
 
+                        <!-- Item Selection Section -->
                         <div class="mb-6">
-                            <h3 class="text-lg font-medium text-gray-900 mb-2">Order Items</h3>
-                            <div class="border rounded-md p-4">
-                                <template x-for="(item, index) in items" :key="index">
-                                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4 pb-4 border-b border-gray-200">
-                                        <div>
-                                            <label :for="'items['+index+'][item_id]'" class="block text-sm font-medium text-gray-700">Item</label>
-                                            <select :name="'items['+index+'][item_id]'" x-model="item.item_id" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" required>
-                                                <option value="">Select Item</option>
-                                                @foreach ($items as $itemOption)
-                                                    <option value="{{ $itemOption->id }}">{{ $itemOption->name }}</option>
-                                                @endforeach
-                                            </select>
-                                            <input type="hidden" :name="'items['+index+'][id]'" x-model="item.id">
-                                        </div>
-                                        <div>
-                                            <label :for="'items['+index+'][quantity]'" class="block text-sm font-medium text-gray-700">Quantity</label>
-                                            <input type="number" :name="'items['+index+'][quantity]'" x-model.number="item.quantity" min="1" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" required @input="calculateSubtotal(index)">
-                                        </div>
-                                        <div>
-                                            <label :for="'items['+index+'][unit_price]'" class="block text-sm font-medium text-gray-700">Unit Price</label>
-                                            <input type="number" :name="'items['+index+'][unit_price]'" x-model.number="item.unit_price" min="0" step="0.01" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" required @input="calculateSubtotal(index)">
-                                        </div>
-                                        <div class="flex items-end">
-                                            <div class="flex-grow">
-                                                <label class="block text-sm font-medium text-gray-700">Subtotal</label>
-                                                <div class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-gray-100 rounded-md shadow-sm sm:text-sm" x-text="formatCurrency(item.subtotal)"></div>
-                                            </div>
-                                            <button type="button" class="ml-2 mb-2 text-red-600 hover:text-red-900" @click="removeItem(index)" x-show="items.length > 1">
-                                                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                                                </svg>
-                                            </button>
-                                        </div>
+                            <h3 class="text-lg font-medium text-gray-900 mb-2">Select Items</h3>
+                            
+                            <!-- Item Filtering -->
+                            <div class="bg-gray-50 p-4 rounded-lg mb-4">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label for="filter-category" class="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                                        <select id="filter-category" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                                            <option value="all">All Categories</option>
+                                            @foreach($items->pluck('category.name', 'category.id')->unique() as $id => $name)
+                                                <option value="{{ $id }}">{{ $name }}</option>
+                                            @endforeach
+                                        </select>
                                     </div>
-                                </template>
-
-                                <div class="flex justify-between items-center mt-4">
-                                    <button type="button" class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-indigo-700 bg-indigo-100 hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" @click="addItem">
-                                        <svg class="h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                                        </svg>
-                                        Add Item
-                                    </button>
-                                    <div class="text-right">
-                                        <span class="text-sm font-medium text-gray-700">Total Amount:</span>
-                                        <span class="ml-2 text-lg font-bold text-gray-900" x-text="formatCurrency(calculateTotal())"></span>
+                                    
+                                    <div>
+                                        <label for="filter-search" class="block text-sm font-medium text-gray-700 mb-1">Search</label>
+                                        <input type="text" id="filter-search" placeholder="Item name..." class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
                                     </div>
                                 </div>
                             </div>
-                            @error('items')
-                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                            @enderror
+                            
+                            <!-- Items Table -->
+                            <div class="border rounded-lg overflow-hidden">
+                                <div class="overflow-x-auto">
+                                    <div class="overflow-y-auto max-h-96">
+                                        <table class="min-w-full divide-y divide-gray-200">
+                                            <thead class="bg-gray-50 sticky top-0">
+                                                <tr>
+                                                    <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                        <input type="checkbox" id="select-all-items" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                                                    </th>
+                                                    <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                        Item
+                                                    </th>
+                                                    <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                        Category
+                                                    </th>
+                                                    <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                        Description
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="bg-white divide-y divide-gray-200">
+                                                @foreach($items as $item)
+                                                    @if($item->is_active)
+                                                    <tr class="item-row hover:bg-gray-50" 
+                                                        data-id="{{ $item->id }}" 
+                                                        data-name="{{ $item->name }}" 
+                                                        data-category="{{ $item->category->id ?? '' }}"
+                                                        data-search="{{ strtolower($item->name . ' ' . ($item->description ?? '')) }}">
+                                                        <td class="px-4 py-3 whitespace-nowrap">
+                                                            <input type="checkbox" 
+                                                                name="selected_items[]" 
+                                                                value="{{ $item->id }}" 
+                                                                class="item-checkbox rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" 
+                                                                data-id="{{ $item->id }}"
+                                                                data-name="{{ $item->name }}"
+                                                                {{ $purchaseOrder->items->contains('item_name', $item->name) ? 'checked' : '' }}>
+                                                        </td>
+                                                        <td class="px-4 py-3 whitespace-nowrap">
+                                                            <div class="text-sm font-medium text-gray-900">{{ $item->name }}</div>
+                                                        </td>
+                                                        <td class="px-4 py-3 whitespace-nowrap">
+                                                            <div class="text-sm text-gray-900">{{ $item->category->name ?? 'N/A' }}</div>
+                                                        </td>
+                                                        <td class="px-4 py-3">
+                                                            <div class="text-sm text-gray-900 truncate max-w-xs">{{ $item->description ?: 'No description' }}</div>
+                                                        </td>
+                                                    </tr>
+                                                    @endif
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-2 flex justify-between items-center">
+                                <div class="text-sm text-gray-700"><span id="selected-count">0</span> items selected</div>
+                                <div>
+                                    <button type="button" id="clear-all" class="text-sm text-gray-600 hover:text-gray-900">Clear All</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Selected Items Section -->
+                        <div class="mb-6">
+                            <h3 class="text-lg font-medium text-gray-900 mb-2">Order Details</h3>
+                            <div class="border rounded-md p-4">
+                                <div id="no-items-message" class="text-center py-8 text-gray-500">
+                                    <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                                    </svg>
+                                    <p class="mt-2">No items selected. Please select items from the table above.</p>
+                                </div>
+                                
+                                <div id="order-details-table" class="hidden">
+                                    <div class="overflow-x-auto">
+                                        <div class="overflow-y-auto max-h-96">
+                                            <table class="min-w-full divide-y divide-gray-200">
+                                                <thead class="bg-gray-50 sticky top-0">
+                                                    <tr>
+                                                        <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Item</th>
+                                                        <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity</th>
+                                                        <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Unit Price</th>
+                                                        <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Subtotal</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="order-items" class="bg-white divide-y divide-gray-200">
+                                                    <!-- Order items will be added here dynamically -->
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <table class="min-w-full">
+                                            <tfoot class="bg-gray-50">
+                                                <tr>
+                                                    <td colspan="3" class="px-4 py-3 text-right text-sm font-medium text-gray-700">Total:</td>
+                                                    <td class="px-4 py-3 text-left text-sm font-bold text-gray-900 w-1/4" id="order-total">₱0.00</td>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                         <div class="flex justify-end">
-                            <button type="submit" class="btn-primary">
+                            <button type="submit" id="submit-button" class="btn-primary" disabled>
                                 Update Purchase Order
                             </button>
                         </div>
@@ -124,44 +208,356 @@
         </div>
     </div>
 
-    <script>
-        function purchaseOrderForm(existingItems) {
-            return {
-                items: existingItems.map(item => ({
-                    id: item.id,
-                    item_id: item.item_id,
-                    quantity: parseFloat(item.quantity),
-                    unit_price: parseFloat(item.unit_price),
-                    subtotal: parseFloat(item.subtotal)
-                })),
-                addItem() {
-                    this.items.push({
-                        id: null,
-                        item_id: '',
-                        quantity: 1,
-                        unit_price: 0,
-                        subtotal: 0
-                    });
-                },
-                removeItem(index) {
-                    if (this.items.length > 1) {
-                        this.items.splice(index, 1);
-                    }
-                },
-                calculateSubtotal(index) {
-                    const item = this.items[index];
-                    item.subtotal = item.quantity * item.unit_price;
-                },
-                calculateTotal() {
-                    return this.items.reduce((total, item) => total + (item.quantity * item.unit_price), 0);
-                },
-                formatCurrency(value) {
-                    return new Intl.NumberFormat('en-PH', {
-                        style: 'currency',
-                        currency: 'PHP'
-                    }).format(value);
-                }
-            };
+    <!-- Store purchase order data in a hidden input -->
+    <input type="hidden" id="existing-purchase-order-data" value="{{ json_encode($purchaseOrder->items->map(function($orderItem) use ($items) {
+        $item = $items->firstWhere('name', $orderItem->item_name);
+        if ($item) {
+            return [
+                'id' => $item->id,
+                'name' => $orderItem->item_name,
+                'quantity' => $orderItem->quantity,
+                'unitPrice' => $orderItem->unit_price,
+                'subtotal' => $orderItem->subtotal
+            ];
         }
+        return null;
+    })->filter()->values()) }}">
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Cache DOM elements
+            const selectAllCheckbox = document.getElementById('select-all-items');
+            const itemCheckboxes = document.querySelectorAll('.item-checkbox');
+            const clearAllButton = document.getElementById('clear-all');
+            const selectedCountElement = document.getElementById('selected-count');
+            const noItemsMessage = document.getElementById('no-items-message');
+            const orderDetailsTable = document.getElementById('order-details-table');
+            const orderItemsContainer = document.getElementById('order-items');
+            const orderTotalElement = document.getElementById('order-total');
+            const submitButton = document.getElementById('submit-button');
+            const filterCategorySelect = document.getElementById('filter-category');
+            const filterSearchInput = document.getElementById('filter-search');
+            
+            // Item data store - will contain all selected items
+            const selectedItems = new Map();
+            
+            // Add existing items to the Map
+            try {
+                const existingItemsData = document.getElementById('existing-purchase-order-data').value;
+                if (existingItemsData) {
+                    const existingItems = JSON.parse(existingItemsData);
+                    existingItems.forEach(item => {
+                        // Ensure numeric values
+                        item.quantity = parseFloat(item.quantity) || 0;
+                        item.unitPrice = parseFloat(item.unitPrice) || 0;
+                        
+                        // Calculate subtotal (in case it's not correctly set from backend)
+                        item.subtotal = item.quantity * item.unitPrice;
+                        
+                        selectedItems.set(item.id, item);
+                    });
+                }
+            } catch (e) {
+                console.error('Error parsing existing purchase order data:', e);
+            }
+            
+            // Initialize event listeners
+            initEventListeners();
+            
+            // Initialize UI
+            updateUI();
+            
+            function initEventListeners() {
+                // Select all checkbox
+                selectAllCheckbox.addEventListener('change', function() {
+                    const isChecked = this.checked;
+                    
+                    // Get all visible item rows
+                    const visibleItemRows = Array.from(document.querySelectorAll('.item-row'))
+                        .filter(row => row.style.display !== 'none');
+                    
+                    // Check/uncheck all visible checkboxes
+                    visibleItemRows.forEach(row => {
+                        const checkbox = row.querySelector('.item-checkbox');
+                        checkbox.checked = isChecked;
+                        
+                        const itemId = parseInt(checkbox.dataset.id);
+                        const itemName = checkbox.dataset.name;
+                        
+                        if (isChecked) {
+                            // Add to selected items if not already there
+                            if (!selectedItems.has(itemId)) {
+                                selectedItems.set(itemId, {
+                                    id: itemId,
+                                    name: itemName,
+                                    quantity: 1,
+                                    unitPrice: 0,
+                                    subtotal: 0
+                                });
+                            }
+                        } else {
+                            // Remove from selected items
+                            selectedItems.delete(itemId);
+                        }
+                    });
+                    
+                    // Update the UI
+                    updateUI();
+                });
+                
+                // Individual item checkboxes
+                itemCheckboxes.forEach(checkbox => {
+                    checkbox.addEventListener('change', function() {
+                        const itemId = parseInt(this.dataset.id);
+                        const itemName = this.dataset.name;
+                        
+                        if (this.checked) {
+                            // Add to selected items
+                            selectedItems.set(itemId, {
+                                id: itemId,
+                                name: itemName,
+                                quantity: 1,
+                                unitPrice: 0,
+                                subtotal: 0
+                            });
+                        } else {
+                            // Remove from selected items
+                            selectedItems.delete(itemId);
+                        }
+                        
+                        // Update the UI
+                        updateUI();
+                    });
+                });
+                
+                // Clear all button
+                clearAllButton.addEventListener('click', function() {
+                    // Uncheck all checkboxes
+                    selectAllCheckbox.checked = false;
+                    itemCheckboxes.forEach(checkbox => {
+                        checkbox.checked = false;
+                    });
+                    
+                    // Clear selected items
+                    selectedItems.clear();
+                    
+                    // Update the UI
+                    updateUI();
+                });
+                
+                // Filter by category
+                filterCategorySelect.addEventListener('change', function() {
+                    filterItems();
+                });
+                
+                // Filter by search
+                filterSearchInput.addEventListener('input', function() {
+                    filterItems();
+                });
+            }
+            
+            function filterItems() {
+                const categoryFilter = filterCategorySelect.value;
+                const searchFilter = filterSearchInput.value.toLowerCase();
+                
+                const rows = document.querySelectorAll('.item-row');
+                
+                rows.forEach(row => {
+                    const categoryMatch = categoryFilter === 'all' || row.dataset.category === categoryFilter;
+                    const searchMatch = !searchFilter || row.dataset.search.includes(searchFilter);
+                    
+                    if (categoryMatch && searchMatch) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+                
+                // Update select all checkbox state
+                updateSelectAllCheckboxState();
+            }
+            
+            function updateSelectAllCheckboxState() {
+                const visibleRows = Array.from(document.querySelectorAll('.item-row'))
+                    .filter(row => row.style.display !== 'none');
+                
+                if (visibleRows.length === 0) {
+                    selectAllCheckbox.checked = false;
+                    selectAllCheckbox.indeterminate = false;
+                    return;
+                }
+                
+                const allChecked = visibleRows.every(row => {
+                    return row.querySelector('.item-checkbox').checked;
+                });
+                
+                const someChecked = visibleRows.some(row => {
+                    return row.querySelector('.item-checkbox').checked;
+                });
+                
+                selectAllCheckbox.checked = allChecked;
+                selectAllCheckbox.indeterminate = !allChecked && someChecked;
+            }
+            
+            function updateUI() {
+                // Update selected count
+                selectedCountElement.textContent = selectedItems.size;
+                
+                // Show/hide no items message and order details table
+                if (selectedItems.size === 0) {
+                    noItemsMessage.classList.remove('hidden');
+                    orderDetailsTable.classList.add('hidden');
+                    submitButton.disabled = true;
+                } else {
+                    noItemsMessage.classList.add('hidden');
+                    orderDetailsTable.classList.remove('hidden');
+                    submitButton.disabled = false;
+                }
+                
+                // Update order items table
+                renderOrderItems();
+                
+                // Update select all checkbox state
+                updateSelectAllCheckboxState();
+            }
+            
+            function renderOrderItems() {
+                // Clear existing items
+                orderItemsContainer.innerHTML = '';
+                
+                // Add each selected item
+                let total = 0;
+                
+                selectedItems.forEach((item, itemId) => {
+                    // Ensure subtotal is calculated
+                    item.subtotal = item.quantity * item.unitPrice;
+                    
+                    const row = document.createElement('tr');
+                    
+                    // Item name cell
+                    const nameCell = document.createElement('td');
+                    nameCell.className = 'px-4 py-3 whitespace-nowrap';
+                    
+                    const hiddenInput = document.createElement('input');
+                    hiddenInput.type = 'hidden';
+                    hiddenInput.name = `items[${itemId}][item_id]`;
+                    hiddenInput.value = itemId;
+                    
+                    const nameDiv = document.createElement('div');
+                    nameDiv.className = 'text-sm font-medium text-gray-900';
+                    nameDiv.textContent = item.name;
+                    
+                    nameCell.appendChild(hiddenInput);
+                    nameCell.appendChild(nameDiv);
+                    
+                    // Quantity cell
+                    const quantityCell = document.createElement('td');
+                    quantityCell.className = 'px-4 py-3 whitespace-nowrap';
+                    
+                    const quantityInput = document.createElement('input');
+                    quantityInput.type = 'number';
+                    quantityInput.name = `items[${itemId}][quantity]`;
+                    quantityInput.value = item.quantity;
+                    quantityInput.min = '1';
+                    quantityInput.className = 'mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md';
+                    quantityInput.required = true;
+                    
+                    quantityInput.addEventListener('input', function() {
+                        const updatedItem = selectedItems.get(itemId);
+                        updatedItem.quantity = parseFloat(this.value) || 0;
+                        updateItemSubtotal(updatedItem);
+                        updateOrderTotal();
+                    });
+                    
+                    quantityCell.appendChild(quantityInput);
+                    
+                    // Unit price cell
+                    const priceCell = document.createElement('td');
+                    priceCell.className = 'px-4 py-3 whitespace-nowrap';
+                    
+                    const priceInput = document.createElement('input');
+                    priceInput.type = 'number';
+                    priceInput.name = `items[${itemId}][unit_price]`;
+                    priceInput.value = item.unitPrice;
+                    priceInput.min = '0';
+                    priceInput.step = '0.01';
+                    priceInput.className = 'mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md';
+                    priceInput.required = true;
+                    
+                    priceInput.addEventListener('input', function() {
+                        const updatedItem = selectedItems.get(itemId);
+                        updatedItem.unitPrice = parseFloat(this.value) || 0;
+                        updateItemSubtotal(updatedItem);
+                        updateOrderTotal();
+                    });
+                    
+                    priceCell.appendChild(priceInput);
+                    
+                    // Subtotal cell
+                    const subtotalCell = document.createElement('td');
+                    subtotalCell.className = 'px-4 py-3 whitespace-nowrap w-1/4';
+                    
+                    const subtotalDiv = document.createElement('div');
+                    subtotalDiv.className = 'text-sm font-medium text-gray-900';
+                    subtotalDiv.textContent = formatCurrency(item.subtotal);
+                    subtotalDiv.dataset.itemId = item.id;
+                    
+                    subtotalCell.appendChild(subtotalDiv);
+                    
+                    // Add cells to row
+                    row.appendChild(nameCell);
+                    row.appendChild(quantityCell);
+                    row.appendChild(priceCell);
+                    row.appendChild(subtotalCell);
+                    
+                    // Add row to table
+                    orderItemsContainer.appendChild(row);
+                    
+                    // Add to total
+                    total += item.subtotal;
+                });
+                
+                // Update order total
+                orderTotalElement.textContent = formatCurrency(total);
+            }
+            
+            function updateItemSubtotal(item) {
+                // Calculate subtotal
+                item.subtotal = item.quantity * item.unitPrice;
+                
+                // Update the subtotal display if it exists
+                const subtotalElement = document.querySelector(`[data-item-id="${item.id}"]`);
+                if (subtotalElement) {
+                    subtotalElement.textContent = formatCurrency(item.subtotal);
+                } else {
+                    console.warn(`Subtotal element not found for item ID: ${item.id}`);
+                }
+                
+                // Debug
+                console.log('Updated item:', { 
+                    id: item.id, 
+                    name: item.name,
+                    quantity: item.quantity, 
+                    unitPrice: item.unitPrice, 
+                    subtotal: item.subtotal 
+                });
+            }
+            
+            function updateOrderTotal() {
+                let total = 0;
+                selectedItems.forEach(item => {
+                    // Ensure subtotal is calculated correctly
+                    item.subtotal = item.quantity * item.unitPrice;
+                    total += item.subtotal;
+                });
+                
+                orderTotalElement.textContent = formatCurrency(total);
+                console.log('Updated order total:', total);
+            }
+            
+            function formatCurrency(value) {
+                return '₱' + parseFloat(value || 0).toFixed(2);
+            }
+        });
     </script>
 @endsection

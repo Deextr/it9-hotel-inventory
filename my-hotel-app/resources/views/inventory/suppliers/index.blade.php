@@ -106,6 +106,7 @@
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact Person</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Address</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                                 </tr>
@@ -132,6 +133,9 @@
                                                     {{ $supplier->phone }}
                                                 </a>
                                             </div>
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <div class="text-gray-700">{{ $supplier->address }}</div>
                                         </td>
                                         <td class="px-6 py-4">
                                             @if ($supplier->is_active)

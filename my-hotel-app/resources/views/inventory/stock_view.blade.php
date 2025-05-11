@@ -141,6 +141,19 @@
                 </div>
             </div>
 
+            <!-- Stock Level Filter for Mobile - Dropdown -->
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6 md:hidden">
+                <div class="p-4 bg-white border-b border-gray-200">
+                    <label for="stock-select" class="block text-sm font-medium text-gray-700 mb-2">Filter by Stock Level</label>
+                    <select id="stock-select" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" onchange="window.location.href=this.value">
+                        <option value="{{ isset($category) ? route('inventory.view.category', ['category' => $category, 'status' => $status ?? '']) : route('inventory.view', ['status' => $status ?? '']) }}" {{ !isset($stockFilter) ? 'selected' : '' }}>All Stock Levels</option>
+                        <option value="{{ isset($category) ? route('inventory.view.category', ['category' => $category, 'status' => $status ?? '', 'stock' => 'in-stock']) : route('inventory.view', ['status' => $status ?? '', 'stock' => 'in-stock']) }}" {{ isset($stockFilter) && $stockFilter === 'in-stock' ? 'selected' : '' }}>In Stock</option>
+                        <option value="{{ isset($category) ? route('inventory.view.category', ['category' => $category, 'status' => $status ?? '', 'stock' => 'low-stock']) : route('inventory.view', ['status' => $status ?? '', 'stock' => 'low-stock']) }}" {{ isset($stockFilter) && $stockFilter === 'low-stock' ? 'selected' : '' }}>Low Stock</option>
+                        <option value="{{ isset($category) ? route('inventory.view.category', ['category' => $category, 'status' => $status ?? '', 'stock' => 'out-of-stock']) : route('inventory.view', ['status' => $status ?? '', 'stock' => 'out-of-stock']) }}" {{ isset($stockFilter) && $stockFilter === 'out-of-stock' ? 'selected' : '' }}>Out of Stock</option>
+                    </select>
+                </div>
+            </div>
+
             <!-- Inventory Items Table -->
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 bg-white border-b border-gray-200">
@@ -175,12 +188,40 @@
                                     Inactive
                                 </a>
                             </div>
+                            
+                            <!-- Stock Level Filter -->
+                            <div class="flex gap-2 mt-2 md:mt-0 md:ml-4">
+                                <span class="text-xs font-medium text-gray-500 self-center mr-1">Stock Level:</span>
+                                <a href="{{ isset($category) ? route('inventory.view.category', ['category' => $category->id, 'status' => $status ?? null]) : route('inventory.view', ['status' => $status ?? null]) }}" 
+                                   class="px-3 py-1 text-xs font-medium rounded-md transition-colors border
+                                   {{ !isset($stockFilter) ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200' }}">
+                                    All
+                                </a>
+                                <a href="{{ isset($category) ? route('inventory.view.category', ['category' => $category->id, 'status' => $status ?? null, 'stock' => 'in-stock']) : route('inventory.view', ['status' => $status ?? null, 'stock' => 'in-stock']) }}" 
+                                   class="px-3 py-1 text-xs font-medium rounded-md transition-colors border
+                                   {{ isset($stockFilter) && $stockFilter === 'in-stock' ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200' }}">
+                                    In Stock
+                                </a>
+                                <a href="{{ isset($category) ? route('inventory.view.category', ['category' => $category->id, 'status' => $status ?? null, 'stock' => 'low-stock']) : route('inventory.view', ['status' => $status ?? null, 'stock' => 'low-stock']) }}" 
+                                   class="px-3 py-1 text-xs font-medium rounded-md transition-colors border
+                                   {{ isset($stockFilter) && $stockFilter === 'low-stock' ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200' }}">
+                                    Low Stock
+                                </a>
+                                <a href="{{ isset($category) ? route('inventory.view.category', ['category' => $category->id, 'status' => $status ?? null, 'stock' => 'out-of-stock']) : route('inventory.view', ['status' => $status ?? null, 'stock' => 'out-of-stock']) }}" 
+                                   class="px-3 py-1 text-xs font-medium rounded-md transition-colors border
+                                   {{ isset($stockFilter) && $stockFilter === 'out-of-stock' ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200' }}">
+                                    Out of Stock
+                                </a>
+                            </div>
                         </div>
                         
                         <div>
                             <form action="{{ isset($category) ? route('inventory.view.category', $category) : route('inventory.view') }}" method="GET" class="flex">
                                 @if(isset($status))
                                     <input type="hidden" name="status" value="{{ $status }}">
+                                @endif
+                                @if(isset($stockFilter))
+                                    <input type="hidden" name="stock" value="{{ $stockFilter }}">
                                 @endif
                                 <input type="text" name="search" placeholder="Search items..." 
                                        class="block w-full rounded-l-md border-gray-300 shadow-sm 

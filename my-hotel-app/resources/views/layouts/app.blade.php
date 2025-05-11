@@ -13,9 +13,7 @@
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
-        
-        <!-- Alpine.js -->
-        <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+        <script defer src="https://unpkg.com/alpinejs@3.13.3/dist/cdn.min.js"></script>
 
         <!-- Custom Styles -->
         <style>
@@ -65,6 +63,18 @@
                 box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
             }
         </style>
+
+        <script>
+            document.addEventListener('alpine:init', () => {
+                Alpine.store('sidebar', {
+                    collapsed: localStorage.getItem('sidebar_collapsed') === 'true',
+                    toggle() {
+                        this.collapsed = !this.collapsed;
+                        localStorage.setItem('sidebar_collapsed', this.collapsed);
+                    }
+                });
+            });
+        </script>
     </head>
     <body class="font-sans antialiased bg-gray-100 dark:bg-gray-900">
         <div class="min-h-screen flex">
@@ -74,7 +84,12 @@
             @endif
 
             <!-- Main Content -->
-            <div class="flex-1 ml-64">
+            <div class="flex-1" 
+                 x-data="{}"
+                 x-bind:class="{
+                    'ml-64': !$store.sidebar?.collapsed,
+                    'ml-16': $store.sidebar?.collapsed
+                 }">
                 @yield('header')
                 @yield('content')
             </div>

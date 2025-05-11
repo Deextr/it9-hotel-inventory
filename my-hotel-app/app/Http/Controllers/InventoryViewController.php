@@ -14,6 +14,7 @@ class InventoryViewController extends Controller
     public function index(Request $request)
     {
         $status = $request->status;
+        $stockFilter = $request->stock;
         
         $items = Item::with(['category', 'inventory'])
             ->when($request->search, function($query, $search) {
@@ -28,17 +29,23 @@ class InventoryViewController extends Controller
             })
             ->orderBy('name')
             ->paginate(10)
-            ->appends($request->only(['search', 'status']));
+            ->appends($request->only(['search', 'status', 'stock']));
             
         $categories = Category::all();
         
-        return view('inventory.stock_view', compact('items', 'categories', 'status'));
+        // Apply stock filter in PHP as it's more complex and involves calculating current stock
+        if ($stockFilter) {
+            $items = $this->applyStockFilter($items, $stockFilter);
+        }
+        
+        return view('inventory.stock_view', compact('items', 'categories', 'status', 'stockFilter'));
     }
     
     // Display items by category
     public function byCategory(Category $category, Request $request)
     {
         $status = $request->status;
+        $stockFilter = $request->stock;
         
         $items = Item::with('inventory')
             ->where('category_id', $category->id)
@@ -54,11 +61,51 @@ class InventoryViewController extends Controller
             })
             ->orderBy('name')
             ->paginate(10)
-            ->appends($request->only(['search', 'status']));
+            ->appends($request->only(['search', 'status', 'stock']));
             
         $categories = Category::all();
         
-        return view('inventory.stock_view', compact('items', 'categories', 'category', 'status'));
+        // Apply stock filter in PHP as it's more complex and involves calculating current stock
+        if ($stockFilter) {
+            $items = $this->applyStockFilter($items, $stockFilter);
+        }
+        
+        return view('inventory.stock_view', compact('items', 'categories', 'category', 'status', 'stockFilter'));
+    }
+    
+    // Helper method to apply stock filtering
+    private function applyStockFilter($items, $stockFilter)
+    {
+        // Create a custom collection to preserve pagination metadata
+        $filteredItems = clone $items;
+        
+        // Apply the appropriate filter
+        if ($stockFilter === 'in-stock') {
+            // Filter to only items with stock > 0
+            $filteredItems->setCollection(
+                $items->getCollection()->filter(function($item) {
+                    return $item->getCurrentStock() > 0;
+                })
+            );
+        } elseif ($stockFilter === 'low-stock') {
+            // Filter to only items with stock > 0 but <= reorder level
+            $filteredItems->setCollection(
+                $items->getCollection()->filter(function($item) {
+                    $currentStock = $item->getCurrentStock();
+                    $reorderLevel = $item->inventory ? $item->inventory->reorder_level : 0;
+                    return $currentStock > 0 && $currentStock <= $reorderLevel;
+                })
+            );
+        } elseif ($stockFilter === 'out-of-stock') {
+            // Filter to only items with stock <= 0
+            $filteredItems->setCollection(
+                $items->getCollection()->filter(function($item) {
+                    return $item->getCurrentStock() <= 0;
+                })
+            );
+        }
+        
+        return $filteredItems;
     }
     
     // Process stock in from delivered purchase orders

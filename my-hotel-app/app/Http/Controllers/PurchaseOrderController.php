@@ -292,6 +292,12 @@ class PurchaseOrderController extends Controller
 
     public function destroy(PurchaseOrder $purchaseOrder)
     {
+        // Check if the purchase order can be deleted
+        if ($purchaseOrder->status !== 'pending') {
+            return redirect()->route('inventory.purchase_orders.index')
+                ->with('error', 'Cannot delete a purchase order that has been delivered or canceled.');
+        }
+        
         try {
             DB::beginTransaction();
             

@@ -344,9 +344,13 @@
 
     <!-- ChartJS -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Register ChartJS datalabels plugin
+            Chart.register(ChartDataLabels);
+            
             // Category Distribution Chart
             fetch('/api/inventory/category-distribution')
                 .then(response => response.json())
@@ -359,18 +363,26 @@
                 })
                 .then(data => {
                     const ctx = document.getElementById('categoryDistributionChart').getContext('2d');
+                    
+                    // Ensure we have data and calculate total for percentages
+                    const chartData = data.data || [45, 25, 15, 10, 5];
+                    const chartLabels = data.labels || ['Furniture', 'Electronics', 'Kitchen', 'Bathroom', 'Others'];
+                    const total = chartData.reduce((sum, value) => sum + value, 0);
+                    
                     new Chart(ctx, {
                         type: 'doughnut',
                         data: {
-                            labels: data.labels || ['Furniture', 'Electronics', 'Kitchen', 'Bathroom', 'Others'],
+                            labels: chartLabels,
                             datasets: [{
-                                data: data.data || [45, 25, 15, 10, 5],
+                                data: chartData,
                                 backgroundColor: [
                                     'rgba(54, 162, 235, 0.8)',
                                     'rgba(255, 99, 132, 0.8)',
                                     'rgba(255, 206, 86, 0.8)',
                                     'rgba(75, 192, 192, 0.8)',
-                                    'rgba(153, 102, 255, 0.8)'
+                                    'rgba(153, 102, 255, 0.8)',
+                                    'rgba(255, 159, 64, 0.8)',
+                                    'rgba(201, 203, 207, 0.8)'
                                 ],
                                 borderWidth: 1
                             }]
@@ -381,6 +393,47 @@
                             plugins: {
                                 legend: {
                                     position: 'right',
+                                    labels: {
+                                        generateLabels: function(chart) {
+                                            // Get the default legend items
+                                            const original = Chart.overrides.pie.plugins.legend.labels.generateLabels;
+                                            const labels = original.call(this, chart);
+                                            
+                                            // Modify the text to include the data value
+                                            labels.forEach((label, i) => {
+                                                const value = chart.data.datasets[0].data[i];
+                                                const percentage = Math.round((value / total) * 100);
+                                                label.text = `${label.text}: ${value} (${percentage}%)`;
+                                            });
+                                            
+                                            return labels;
+                                        },
+                                        font: {
+                                            size: 11
+                                        },
+                                        padding: 15
+                                    }
+                                },
+                                tooltip: {
+                                    callbacks: {
+                                        label: function(context) {
+                                            const label = context.label || '';
+                                            const value = context.raw || 0;
+                                            const percentage = Math.round((value / total) * 100);
+                                            return `${label}: ${value} (${percentage}%)`;
+                                        }
+                                    }
+                                },
+                                datalabels: {
+                                    formatter: (value, ctx) => {
+                                        const percentage = Math.round((value / total) * 100);
+                                        return percentage + '%';
+                                    },
+                                    color: '#fff',
+                                    font: {
+                                        weight: 'bold',
+                                        size: 12
+                                    }
                                 }
                             }
                         }
