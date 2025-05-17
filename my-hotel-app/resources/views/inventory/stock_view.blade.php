@@ -8,8 +8,11 @@
                     Inventory Stock Management
                 </h2>
                 <div class="flex space-x-2">
-                    <a href="{{ route('inventory.purchase_orders.index') }}" class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:border-indigo-900 focus:ring ring-indigo-300 disabled:opacity-25 transition ease-in-out duration-150">
-                        Purchase Orders
+                    <a href="{{ route('inventory.purchase_orders.index') }}" class="text-indigo-600 hover:text-indigo-900 flex items-center p-1 rounded-full hover:bg-indigo-100" title="Purchase Orders">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z" />
+                            <path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clip-rule="evenodd" />
+                        </svg>
                     </a>
                 </div>
             </div>
@@ -228,11 +231,10 @@
                                               focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                                        value="{{ request()->search }}">
                                 <button type="submit" 
-                                        class="inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent 
-                                               rounded-r-md font-semibold text-xs text-white uppercase tracking-widest 
-                                               hover:bg-gray-700 active:bg-gray-900 focus:outline-none focus:border-gray-900 
-                                               focus:ring ring-gray-300 disabled:opacity-25 transition ease-in-out duration-150">
-                                    SEARCH
+                                        class="text-gray-600 hover:text-gray-900 flex items-center p-1 rounded-full hover:bg-gray-100" title="Search">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+                                    </svg>
                                 </button>
                             </form>
                         </div>

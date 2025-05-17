@@ -25,7 +25,7 @@
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div>
                                 <h3 class="text-sm font-medium text-gray-500">Date & Time</h3>
-                                <p class="mt-1 text-lg text-gray-900">{{ date('M d, Y g:i:s A', strtotime($auditLog->created_at)) }}</p>
+                                <p class="mt-1 text-lg text-gray-900">@formatDateTime($auditLog->created_at)</p>
                             </div>
                             <div>
                                 <h3 class="text-sm font-medium text-gray-500">User</h3>

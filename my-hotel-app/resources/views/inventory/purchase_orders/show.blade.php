@@ -9,19 +9,26 @@
                 </h2>
                 <div class="flex space-x-2">
                     @if($purchaseOrder->status === 'pending')
-                        <a href="{{ route('inventory.purchase_orders.edit', $purchaseOrder) }}" class="btn-primary">
-                            Edit
+                        <a href="{{ route('inventory.purchase_orders.edit', $purchaseOrder) }}" class="text-blue-600 hover:text-blue-900 flex items-center p-1 rounded-full hover:bg-blue-100" title="Edit">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                            </svg>
                         </a>
                     @endif
                     
                     @if($purchaseOrder->status === 'delivered')
-                        <a href="{{ route('inventory.view') }}" class="btn-primary">
-                            View Inventory
+                        <a href="{{ route('inventory.view') }}" class="text-indigo-600 hover:text-indigo-900 flex items-center p-1 rounded-full hover:bg-indigo-100" title="View Inventory">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                                <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
+                            </svg>
                         </a>
                     @endif
                     
-                    <a href="{{ route('inventory.purchase_orders.index') }}" class="btn-secondary">
-                        Back to Purchase Orders
+                    <a href="{{ route('inventory.purchase_orders.index') }}" class="text-gray-600 hover:text-gray-900 flex items-center p-1 rounded-full hover:bg-gray-100" title="Back to Purchase Orders">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                        </svg>
                     </a>
                 </div>
             </div>
@@ -57,7 +64,7 @@
                                     </div>
                                     <div>
                                         <p class="text-sm font-medium text-gray-500">Order Date</p>
-                                        <p class="mt-1">{{ $purchaseOrder->order_date->format('Y-m-d') }}</p>
+                                        <p class="mt-1">@formatDate($purchaseOrder->order_date)</p>
                                     </div>
                                     <div class="col-span-2">
                                         <p class="text-sm font-medium text-gray-500">Status</p>
@@ -70,16 +77,20 @@
                                                     <form action="{{ route('inventory.purchase_orders.deliver', $purchaseOrder) }}" method="POST" class="inline">
                                                         @csrf
                                                         @method('PATCH')
-                                                        <button type="submit" style="background-color: #10b981; color: white; padding: 0.25rem 0.75rem; border-radius: 0.25rem; font-weight: 500; border: none;" onclick="return confirm('Are you sure you want to mark this order as delivered? Items will be automatically added to inventory.')">
-                                                            Mark as Delivered
+                                                        <button type="submit" class="text-green-600 hover:text-green-900 flex items-center p-1 rounded-full hover:bg-green-100" title="Mark as Delivered" onclick="return confirm('Are you sure you want to mark this order as delivered? Items will be automatically added to inventory.')">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                                            </svg>
                                                         </button>
                                                     </form>
                                                     
                                                     <form action="{{ route('inventory.purchase_orders.cancel', $purchaseOrder) }}" method="POST" class="inline">
                                                         @csrf
                                                         @method('PATCH')
-                                                        <button type="submit" style="background-color: #ef4444; color: white; padding: 0.25rem 0.75rem; border-radius: 0.25rem; font-weight: 500; border: none;" onclick="return confirm('Are you sure you want to cancel this order?')">
-                                                            Cancel Order
+                                                        <button type="submit" class="text-red-600 hover:text-red-900 flex items-center p-1 rounded-full hover:bg-red-100" title="Cancel Order" onclick="return confirm('Are you sure you want to cancel this order?')">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                                                <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                                            </svg>
                                                         </button>
                                                     </form>
                                                 </div>
@@ -100,7 +111,7 @@
                                     @if($purchaseOrder->status == 'delivered' && $purchaseOrder->delivered_date)
                                         <div>
                                             <p class="text-sm font-medium text-gray-500">Delivered Date</p>
-                                            <p class="mt-1">{{ $purchaseOrder->delivered_date->format('Y-m-d') }}</p>
+                                            <p class="mt-1">@formatDate($purchaseOrder->delivered_date)</p>
                                         </div>
                                     @endif
                                     <div>

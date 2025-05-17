@@ -7,8 +7,10 @@
                 <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                     Create Purchase Order
                 </h2>
-                <a href="{{ route('inventory.purchase_orders.index') }}" class="btn-secondary">
-                    Back to Purchase Orders
+                <a href="{{ route('inventory.purchase_orders.index') }}" class="text-gray-600 hover:text-gray-900 flex items-center p-1 rounded-full hover:bg-gray-100" title="Back to Purchase Orders">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                    </svg>
                 </a>
             </div>
         </div>
@@ -70,17 +72,17 @@
                             <!-- Item Filtering -->
                             <div class="bg-gray-50 p-4 rounded-lg mb-4">
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div>
+                                        <div>
                                         <label for="filter-category" class="block text-sm font-medium text-gray-700 mb-1">Category</label>
                                         <select id="filter-category" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
                                             <option value="all">All Categories</option>
                                             @foreach($items->pluck('category.name', 'category.id')->unique() as $id => $name)
                                                 <option value="{{ $id }}">{{ $name }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
+                                                @endforeach
+                                            </select>
+                                        </div>
                                     
-                                    <div>
+                                        <div>
                                         <label for="filter-search" class="block text-sm font-medium text-gray-700 mb-1">Search</label>
                                         <input type="text" id="filter-search" placeholder="Item name..." class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
                                     </div>
@@ -140,15 +142,15 @@
                                         </table>
                                     </div>
                                 </div>
-                            </div>
+                                        </div>
                             
                             <div class="mt-2 flex justify-between items-center">
                                 <div class="text-sm text-gray-700"><span id="selected-count">0</span> items selected</div>
-                                <div>
+                                        <div>
                                     <button type="button" id="clear-all" class="text-sm text-gray-600 hover:text-gray-900">Clear All</button>
                                 </div>
-                            </div>
-                        </div>
+                                        </div>
+                                            </div>
 
                         <!-- Selected Items Section -->
                         <div class="mb-6">
@@ -157,7 +159,7 @@
                                 <div id="no-items-message" class="text-center py-8 text-gray-500">
                                     <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
-                                    </svg>
+                                                </svg>
                                     <p class="mt-2">No items selected. Please select items from the table above.</p>
                                 </div>
                                 
@@ -192,7 +194,10 @@
                         </div>
 
                         <div class="flex justify-end">
-                            <button type="submit" id="submit-button" class="btn-primary" disabled>
+                            <button type="submit" id="submit-button" class="text-white bg-indigo-600 hover:bg-indigo-700 flex items-center px-4 py-2 rounded-md font-medium" disabled>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
+                                </svg>
                                 Create Purchase Order
                             </button>
                         </div>
@@ -246,9 +251,9 @@
                                 selectedItems.set(itemId, {
                                     id: itemId,
                                     name: itemName,
-                                    quantity: 1,
+                        quantity: 1,
                                     unitPrice: 0,
-                                    subtotal: 0
+                        subtotal: 0
                                 });
                             }
                         } else {
@@ -272,9 +277,9 @@
                             selectedItems.set(itemId, {
                                 id: itemId,
                                 name: itemName,
-                                quantity: 1,
+                        quantity: 1,
                                 unitPrice: 0,
-                                subtotal: 0
+                        subtotal: 0
                             });
                         } else {
                             // Remove from selected items

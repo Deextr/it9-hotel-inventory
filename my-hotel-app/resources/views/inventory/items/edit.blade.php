@@ -7,7 +7,11 @@
                 <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
                     {{ __('Edit Item') }}
                 </h2>
-                <a href="{{ route('inventory.items.index') }}" class="btn-secondary">Back to List</a>
+                <a href="{{ route('inventory.items.index') }}" class="text-gray-600 hover:text-gray-900 flex items-center p-1 rounded-full hover:bg-gray-100" title="Back to List">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                    </svg>
+                </a>
             </div>
         </div>
     </header>
@@ -58,7 +62,12 @@
                         </div>
 
                         <div class="flex items-center justify-end mt-6">
-                            <button type="submit" class="btn-primary">Update Item</button>
+                            <button type="submit" class="text-white bg-indigo-600 hover:bg-indigo-700 flex items-center px-4 py-2 rounded-md font-medium">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                </svg>
+                                Update Item
+                            </button>
                         </div>
                     </form>
                 </div>

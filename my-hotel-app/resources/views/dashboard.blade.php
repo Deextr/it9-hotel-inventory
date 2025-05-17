@@ -235,8 +235,8 @@
                                                 </svg>
                                             </div>
                                             <div class="ml-3">
-                                                <div class="text-sm text-gray-500 dark:text-gray-400">{{ $log->created_at->format('M d, Y') }}</div>
-                                                <div class="text-xs text-gray-400 dark:text-gray-500">{{ $log->created_at->format('h:i A') }}</div>
+                                                <div class="text-sm text-gray-500 dark:text-gray-400">@formatDate($log->created_at)</div>
+                                                <div class="text-xs text-gray-400 dark:text-gray-500">@formatTime($log->created_at)</div>
                                             </div>
                                         </div>
                                     </td>

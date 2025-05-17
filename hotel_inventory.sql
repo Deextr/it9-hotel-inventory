@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 11, 2025 at 11:26 AM
+-- Generation Time: May 17, 2025 at 04:35 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -122,7 +122,11 @@ INSERT INTO `audit_logs` (`id`, `user_id`, `action`, `table_name`, `record_id`, 
 (76, 1, 'login', 'users', 1, NULL, NULL, '2025-05-11 01:16:46', '2025-05-11 01:16:46'),
 (77, 1, 'logout', 'users', 1, NULL, NULL, '2025-05-11 01:18:47', '2025-05-11 01:18:47'),
 (78, 1, 'login', 'users', 1, NULL, NULL, '2025-05-11 01:18:51', '2025-05-11 01:18:51'),
-(79, 1, 'logout', 'users', 1, NULL, NULL, '2025-05-11 01:25:55', '2025-05-11 01:25:55');
+(79, 1, 'logout', 'users', 1, NULL, NULL, '2025-05-11 01:25:55', '2025-05-11 01:25:55'),
+(80, 1, 'login', 'users', 1, NULL, NULL, '2025-05-14 16:45:21', '2025-05-14 16:45:21'),
+(81, 1, 'login', 'users', 1, NULL, NULL, '2025-05-17 05:35:43', '2025-05-17 05:35:43'),
+(82, 1, 'logout', 'users', 1, NULL, NULL, '2025-05-17 14:34:28', '2025-05-17 14:34:28'),
+(83, 1, 'login', 'users', 1, NULL, NULL, '2025-05-17 14:34:34', '2025-05-17 14:34:34');
 
 -- --------------------------------------------------------
 
@@ -553,8 +557,7 @@ CREATE TABLE `sessions` (
 --
 
 INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
-('hb57yXat4vuyBPr7mMjAy79RsMTpZf12v0tCbQVe', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoic24xNVlaU1cwcGY0UXJGRnVaOUs5MGlEWW4xZE9mNXQ4dXh4dGVhVCI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MjE6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMCI7fX0=', 1746955555),
-('tquNHB8rVR6aw88p32aSuFgQ4l57DowEWghnVMX0', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36', 'YToyOntzOjY6Il90b2tlbiI7czo0MDoiWmhCaFhQczBQSWhPQ2ZNVXV3RzVsdW1uY0dud1NPV0tBdnBaQjJkaSI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', 1746954170);
+('Kh6sWPTTRGkqRg1aVUBzIXmYMKGFjv8SQzlvYyKo', 1, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiWDFRR0Z4bEJkdFJzN3dSMHdSUTlBbGtIUHhtOHhBM25qbWVHVTVnTSI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NTE6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9hcGkvaW52ZW50b3J5L3N0b2NrLW1vdmVtZW50cyI7fXM6NTA6ImxvZ2luX3dlYl81OWJhMzZhZGRjMmIyZjk0MDE1ODBmMDE0YzdmNThlYTRlMzA5ODlkIjtpOjE7fQ==', 1747492483);
 
 -- --------------------------------------------------------
 
@@ -825,7 +828,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `audit_logs`
 --
 ALTER TABLE `audit_logs`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=80;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=84;
 
 --
 -- AUTO_INCREMENT for table `categories`
